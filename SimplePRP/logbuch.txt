@@ -1,0 +1,320 @@
+Logbuch:
+
+***************************************************
+* Neues Eclipse Spring Projekt
+***************************************************
+ 
+	- in STS vom Typ "Spring MVC" erstellt mit Namen "SimplePRP".
+
+***************************************************
+* Package Struktur aufgebaut
+***************************************************
+
+	- de.webertise.simpleprp.
+		- controller
+			=> Anpassung: 
+				- HomeController hierhin verschoben und nach AuthController umbenannt
+			
+		- model (entities)
+			- dao (Interfaces)
+				- impl (dao implementations)
+		
+		- service (Interfaces)
+			- impl (service implementations)
+
+***************************************************
+* Lokalisierung hinzugefügt
+***************************************************
+
+	- Neue Properties Dateien unter src/main/resources angelegt (resources_de.properties/resources_en.properties)
+		- eine Property "application.name=Simple PRP (de)" bzw. ...(en) angelegt
+		
+	- Neues Verzeichnis unter src/main/resources namens "spring" angelegt und neuen XML Inhalt "spring-language.xml" mit nachfolgendem Inhalt angelegt:
+	
+		<?xml version="1.0" encoding="UTF-8"?>
+		<beans:beans 
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			xmlns:beans="http://www.springframework.org/schema/beans"
+			xmlns:mvc="http://www.springframework.org/schema/mvc"
+			xsi:schemaLocation="
+				http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+				http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+			<!--  Language Handling -->
+		    <mvc:interceptors>  
+				<beans:bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+					<beans:property name="paramName" value="language" />
+				</beans:bean>
+		    </mvc:interceptors>
+			<beans:bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
+				<beans:property name="defaultLocale" value="de" />
+			</beans:bean>
+			<beans:bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+				<beans:property name="basename" value="resources" />
+			</beans:bean>
+		</beans:beans>
+
+	- servlet-context.xml erweitert um folgenden Schnipsel am Ende
+		
+		<!-- Language -->
+    	<beans:import resource="classpath:spring/spring-language.xml" />
+    	
+    - views/home.jsp angepasst, um Mehrsprachigkeit testen zu können
+    	
+    	<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+    	...
+    	<h1><spring:message code="application.name"/></h1>
+    	
+		
+***************************************************
+* Erster Ausführungstest
+***************************************************
+	
+	- Projekt "SimplePRP" auswählen
+	- Run As => Run on Server
+	- Test der Anwendung => http://localhost:8080/simpleprp/
+	- Test der Sprachumschaltung 
+		- Aufruf initial ohne language Parameter => de
+		- Aufruf mit ?language=en => en
+	
+***************************************************
+* Datenbankanbindung / Hibernate / JPA
+***************************************************
+	- Database / JPA / Transaction Konfiguration in spring/spring-database.xml angelegt:
+	
+		<beans:beans 
+	    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:beans="http://www.springframework.org/schema/beans"
+		xmlns:tx="http://www.springframework.org/schema/tx" 
+	    xmlns:security="http://www.springframework.org/schema/security"
+	    xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+	        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
+	        http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+	        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
+	    
+		    <!-- Database -->
+			<beans:bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		        <beans:property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		        <beans:property name="url" value="jdbc:mysql://localhost:8889/simpleprp" />
+		        <beans:property name="username" value="root" />
+		        <beans:property name="password" value="password" />
+		    </beans:bean>
+		    
+		    <beans:bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
+			<beans:bean id="jpaDialect" class="org.springframework.orm.jpa.vendor.HibernateJpaDialect" />
+			<beans:bean id="jpaAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+			
+			<jpa:repositories base-package="de.webertise.simpleprp.model.dao" />
+		    
+		    <beans:bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		        <beans:property name="dataSource" ref="dataSource" />
+				<beans:property name="packagesToScan" value="de.webertise.simpleprp.model" />
+		        <beans:property name="jpaVendorAdapter" ref="jpaAdapter"/>
+		    	<beans:property name="jpaDialect" ref="jpaDialect" />
+		    	<beans:property name="persistenceUnitName" value="SimplePRP-PU" />
+		        <beans:property name="jpaProperties">
+		        	<beans:props>
+		        		<beans:prop key="hibernate.hbm2ddl.auto">create-drop</beans:prop>
+		        		<beans:prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</beans:prop>
+		        	</beans:props>
+		        </beans:property>
+		        <beans:property name="loadTimeWeaver">
+		            <beans:bean class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver"/>
+		        </beans:property>
+		    </beans:bean>
+		    
+		    <!-- Transaction -->
+			<beans:bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+				<beans:property name="entityManagerFactory" ref="entityManagerFactory"/>
+				<beans:property name="dataSource" ref="dataSource"/>
+				<beans:property name="jpaDialect" ref="jpaDialect"/>
+			</beans:bean>
+			<tx:annotation-driven transaction-manager="transactionManager"/>
+		
+		</beans:beans>
+		
+	- pom.xml um zusätzliche Abhängigkeiten ergänzt
+	
+		<properties>
+			<java-version>1.6</java-version>
+			<org.springframework-version>3.2.4.RELEASE</org.springframework-version>
+			<org.springframework-data-version>1.4.1.RELEASE</org.springframework-data-version>
+			<org.aspectj-version>1.6.10</org.aspectj-version>
+			<org.slf4j-version>1.6.6</org.slf4j-version>
+			<org.hibernate-core>4.2.1.Final</org.hibernate-core>
+			<org.hibernate-validator>4.3.0.Final</org.hibernate-validator>
+			<org.hibernate-entitymanager>4.2.4.Final</org.hibernate-entitymanager>
+			<mysql-connector-version>5.1.26</mysql-connector-version>
+		</properties>
+	
+        <!-- Database -->
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-jpa</artifactId>
+			<version>${org.springframework-data-version}</version>
+		</dependency>
+    	<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>${org.hibernate-core}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>${org.hibernate-validator}</version>
+		</dependency>
+   	    <dependency>
+      		<groupId>org.hibernate</groupId>
+      		<artifactId>hibernate-entitymanager</artifactId>
+      		<version>${org.hibernate-entitymanager}</version>
+      		<scope>compile</scope>
+    	</dependency>
+        <dependency>
+      		<groupId>mysql</groupId>
+      		<artifactId>mysql-connector-java</artifactId>
+      		<version>${mysql-connector-version}</version>
+      		<scope>compile</scope>
+    	</dependency>
+		
+	- DB in MySQL erstellen mit dem Namen: simpleprp
+		- UTF-8 / Unicode
+	
+
+***************************************************
+* Implementierung des Model mit Dao und Service
+***************************************************
+
+	- AbstractEntityObject erstellt, welches id, createdBy, createdAt, changedBy, changedAt 
+	  und version als Standard Properties für Entities bereitstellt
+	
+	- Erste Entity Objekte unter /model erstellen mit 1..N Relation: 
+		- User 
+		- Role
+	
+	- Restart erzeugt automatisch ein DB-Model in der MySQL DB => DB Model prüfen
+	
+	- Implementierung eines DAO Interface für User und für Role basierend auf CrudRepository
+	
+	- Definition von weiteren Methoden im Interface z.B. getByLogin(...)
+	
+	- Service Interfaces für User und Role erstellen
+		- UserService und RoleService
+		- Alle Dao Interface Methoden werden ebenfalls als Methoden in den Service übernommen.
+		
+	- Service Implementierungen für RoleService und User Service erstellen
+	    - alle Methoden des Service Interface implementieren auf Basis der Dao Methoden, die aktuell 1:1 übereinstimmen
+	    
+
+***************************************************
+* JSON als Rückgabeformat definieren
+***************************************************
+
+	- Dependency für Jackson hinzufügen (Version 1.9.13)
+
+		<org.codehaus-jackson-version>1.9.13</org.codehaus-jackson-version>		
+		
+		<dependency>
+		  <groupId> org.codehaus.jackson</groupId>
+		  <artifactId>jackson-mapper-asl</artifactId>
+		  <version>${org.codehaus-jackson-version}</version>
+		</dependency>
+
+	- Im UserController eine getById Methode einfügen mit "@ResponseBody User" als Return Objekt
+	
+	- Folgende Resolver Konfiguration wurde ersetzt
+	
+		<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+		<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+			<beans:property name="prefix" value="/WEB-INF/views/" />
+			<beans:property name="suffix" value=".jsp" />
+		</beans:bean>
+	
+	  durch
+	  
+	  	<!-- Resolves incoming requests for the @Controller to based on the media type (html / json) -->
+		<beans:bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+		  <beans:property name="mediaTypes">
+		    <beans:map>
+		      <beans:entry key="html" value="text/html"/>
+		      <beans:entry key="json" value="application/json"/>
+		    </beans:map>
+		  </beans:property>
+		  <beans:property name="viewResolvers">
+		    <beans:list>
+		      <beans:bean class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+		        <beans:property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+		        <beans:property name="prefix" value="/WEB-INF/jsp/"/>
+		        <beans:property name="suffix" value=".jsp"/>
+		      </beans:bean>
+		    </beans:list>
+		  </beans:property>
+		  <beans:property name="defaultViews">
+		    <beans:list>
+		      <beans:bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">
+		        <beans:property name="prefixJson" value="true"/>
+		      </beans:bean>
+		    </beans:list>
+		  </beans:property>
+		</beans:bean>
+
+***************************************************
+* JUnit Tests einbauen (speziell für JSON)
+***************************************************
+
+	- Dependency for JUnit und weitere Libraries hinzufügen
+	- JUnit 4.7 => 4.11 geändert
+		
+		<!-- Test -->
+		<dependency>
+		    <groupId>junit</groupId>
+		    <artifactId>junit</artifactId>
+		    <version>4.11</version>
+		    <scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-test</artifactId>
+		    <version>3.2.4.RELEASE</version>
+		    <scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>com.jayway.jsonpath</groupId>
+		    <artifactId>json-path</artifactId>
+		    <version>0.9.1</version>
+		    <scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>com.jayway.jsonpath</groupId>
+		    <artifactId>json-path-assert</artifactId>
+		    <version>0.9.1</version>
+		    <scope>test</scope>
+		</dependency>
+		
+	- Die servlet-context.xml muss zusätzlich auch in den Classpath gelegt werden. 
+	  Kopie mit Namen "servlet-context-test.xml" wird daher unter src/main/resources 
+	  erstellt. Zusätzlich werden alle generellen Konfigurationen in eine 
+	  "/spring/spring-general.xml" ausgelagert, und in die servlet-context.xml und
+	  servlet-context-test.xml eingebunden, um Einstellungen für Unit Tests und
+	  normale Ausführung nicht redundant zu halten.
+	  
+	- Implementierung einer UserControllerText.java zum Test der entspr. Controller 
+	  Methoden.
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	
