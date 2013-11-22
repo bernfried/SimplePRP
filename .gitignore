@@ -4,3 +4,17 @@
 *.jar
 *.war
 *.ear
+
+SimplePRP/.classpath
+
+SimplePRP/.gitignore
+
+SimplePRP/.project
+
+*.prefs
+
+SimplePRP/.settings/org.eclipse.wst.common.component
+
+SimplePRP/.settings/org.eclipse.wst.common.project.facet.core.xml
+
+SimplePRP/.springBeans
