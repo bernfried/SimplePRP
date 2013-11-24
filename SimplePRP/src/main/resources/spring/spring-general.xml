@@ -37,6 +37,13 @@
 							<beans:property name="classesToBeBound">
 								<beans:list>
 									<beans:value>de.webertise.simpleprp.model.User</beans:value>
+									<beans:value>de.webertise.simpleprp.model.Client</beans:value>
+									<beans:value>de.webertise.simpleprp.model.Customer</beans:value>
+									<beans:value>de.webertise.simpleprp.model.Module</beans:value>
+									<beans:value>de.webertise.simpleprp.model.Project</beans:value>
+									<beans:value>de.webertise.simpleprp.model.ResourceReservation</beans:value>
+									<beans:value>de.webertise.simpleprp.model.ResourceRole</beans:value>
+									<beans:value>de.webertise.simpleprp.model.Role</beans:value>
 								</beans:list>
 							</beans:property>
 						</beans:bean>
