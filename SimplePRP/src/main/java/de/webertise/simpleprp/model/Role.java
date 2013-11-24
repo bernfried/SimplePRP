@@ -1,6 +1,6 @@
 package de.webertise.simpleprp.model;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -30,7 +30,7 @@ public class Role extends AbstractEntityObject {
 
 	@ManyToMany
 	@JoinTable(name = "PRP_USER_ROLE", joinColumns = { @JoinColumn(name = "ROLE_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "USER_ID", referencedColumnName = "ID") })
-	private List<User> users;
+	private Set<User> users;
 
 	// *************************************************************************
 	// * Constructors

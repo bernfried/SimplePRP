@@ -1,10 +1,11 @@
 package de.webertise.simpleprp.model;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -12,13 +13,14 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import de.webertise.simpleprp.model.general.AbstractEntityObject;
 
 @Entity
-@Table(name = "PRP_USER", uniqueConstraints = {
-		@UniqueConstraint(columnNames = { "login" }),
-		@UniqueConstraint(columnNames = { "email" }) })
+@Table(name = "PRP_USER", uniqueConstraints = { @UniqueConstraint(columnNames = { "login" }), @UniqueConstraint(columnNames = { "email" }) })
+@XmlRootElement(name = "user")
 public class User extends AbstractEntityObject {
 
 	// *******************************************************
@@ -60,28 +62,28 @@ public class User extends AbstractEntityObject {
 	// *******************************************************
 	// * Relationships
 	// *******************************************************
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "PRP_USER_ROLE", joinColumns = { @JoinColumn(name = "USER_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "ROLE_ID", referencedColumnName = "ID") })
-	private List<Role> authorities;
+	private Set<Role> authorities;
 
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "PRP_USER_CLIENT", joinColumns = { @JoinColumn(name = "USER_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "CLIENT_ID", referencedColumnName = "ID") })
-	private List<Client> clients;
+	private Set<Client> clients;
 
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "PRP_USER_MODULE", joinColumns = { @JoinColumn(name = "USER_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "MODULE_ID", referencedColumnName = "ID") })
-	private List<Module> modules;
+	private Set<Module> modules;
 
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "PRP_PROJECT_USER", joinColumns = { @JoinColumn(name = "USER_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "PROJECT_ID", referencedColumnName = "ID") })
-	private List<Project> projects;
+	private Set<Project> projects;
 
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "PRP_USER_RESOURCEROLE", joinColumns = { @JoinColumn(name = "USER_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "RESOURCEROLE_ID", referencedColumnName = "ID") })
-	private List<ResourceRole> resourceRoles;
+	private Set<ResourceRole> resourceRoles;
 
-	@OneToMany(mappedBy = "user")
-	private List<ResourceReservation> resourceReservations;
+	@OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+	private Set<ResourceReservation> resourceReservations;
 
 	// *******************************************************
 	// * Transient fields
@@ -111,6 +113,7 @@ public class User extends AbstractEntityObject {
 	/**
 	 * @return the login
 	 */
+	@XmlElement
 	public String getLogin() {
 		return login;
 	}
@@ -126,6 +129,7 @@ public class User extends AbstractEntityObject {
 	/**
 	 * @return the email
 	 */
+	@XmlElement
 	public String getEmail() {
 		return email;
 	}
@@ -141,6 +145,7 @@ public class User extends AbstractEntityObject {
 	/**
 	 * @return the password
 	 */
+	@XmlElement
 	public String getPassword() {
 		return password;
 	}
@@ -156,6 +161,7 @@ public class User extends AbstractEntityObject {
 	/**
 	 * @return the firstName
 	 */
+	@XmlElement
 	public String getFirstName() {
 		return firstName;
 	}
@@ -171,6 +177,7 @@ public class User extends AbstractEntityObject {
 	/**
 	 * @return the lastName
 	 */
+	@XmlElement
 	public String getLastName() {
 		return lastName;
 	}
@@ -186,6 +193,7 @@ public class User extends AbstractEntityObject {
 	/**
 	 * @return the failedLoginAttempts
 	 */
+	@XmlElement
 	public int getFailedLoginAttempts() {
 		return failedLoginAttempts;
 	}
@@ -201,6 +209,7 @@ public class User extends AbstractEntityObject {
 	/**
 	 * @return the accountNonExpired
 	 */
+	@XmlElement
 	public boolean isAccountNonExpired() {
 		return accountNonExpired;
 	}
@@ -216,6 +225,7 @@ public class User extends AbstractEntityObject {
 	/**
 	 * @return the accountNonLocked
 	 */
+	@XmlElement
 	public boolean isAccountNonLocked() {
 		return accountNonLocked;
 	}
@@ -231,6 +241,7 @@ public class User extends AbstractEntityObject {
 	/**
 	 * @return the credentialsNonExpired
 	 */
+	@XmlElement
 	public boolean isCredentialsNonExpired() {
 		return credentialsNonExpired;
 	}
@@ -246,6 +257,7 @@ public class User extends AbstractEntityObject {
 	/**
 	 * @return the enabled
 	 */
+	@XmlElement
 	public boolean isEnabled() {
 		return enabled;
 	}
@@ -291,7 +303,7 @@ public class User extends AbstractEntityObject {
 	/**
 	 * @return the roles
 	 */
-	public List<Role> getAuthorities() {
+	public Set<Role> getAuthorities() {
 		return authorities;
 	}
 
@@ -299,8 +311,83 @@ public class User extends AbstractEntityObject {
 	 * @param roles
 	 *            the roles to set
 	 */
-	public void setAuthorities(List<Role> roles) {
+	public void setAuthorities(Set<Role> roles) {
 		this.authorities = roles;
+	}
+
+	/**
+	 * @return the clients
+	 */
+	public Set<Client> getClients() {
+		return this.clients;
+	}
+
+	/**
+	 * @param clients
+	 *            the clients to set
+	 */
+	public void setClients(Set<Client> clients) {
+		this.clients = clients;
+	}
+
+	/**
+	 * @return the modules
+	 */
+	public Set<Module> getModules() {
+		return this.modules;
+	}
+
+	/**
+	 * @param modules
+	 *            the modules to set
+	 */
+	public void setModules(Set<Module> modules) {
+		this.modules = modules;
+	}
+
+	/**
+	 * @return the projects
+	 */
+	public Set<Project> getProjects() {
+		return this.projects;
+	}
+
+	/**
+	 * @param projects
+	 *            the projects to set
+	 */
+	public void setProjects(Set<Project> projects) {
+		this.projects = projects;
+	}
+
+	/**
+	 * @return the resourceRoles
+	 */
+	public Set<ResourceRole> getResourceRoles() {
+		return this.resourceRoles;
+	}
+
+	/**
+	 * @param resourceRoles
+	 *            the resourceRoles to set
+	 */
+	public void setResourceRoles(Set<ResourceRole> resourceRoles) {
+		this.resourceRoles = resourceRoles;
+	}
+
+	/**
+	 * @return the resourceReservations
+	 */
+	public Set<ResourceReservation> getResourceReservations() {
+		return this.resourceReservations;
+	}
+
+	/**
+	 * @param resourceReservations
+	 *            the resourceReservations to set
+	 */
+	public void setResourceReservations(Set<ResourceReservation> resourceReservations) {
+		this.resourceReservations = resourceReservations;
 	}
 
 	/*
@@ -318,15 +405,11 @@ public class User extends AbstractEntityObject {
 		result = prime * result + ((email == null) ? 0 : email.hashCode());
 		result = prime * result + (enabled ? 1231 : 1237);
 		result = prime * result + failedLoginAttempts;
-		result = prime * result
-				+ ((firstName == null) ? 0 : firstName.hashCode());
-		result = prime * result
-				+ ((lastName == null) ? 0 : lastName.hashCode());
+		result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
+		result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
 		result = prime * result + ((login == null) ? 0 : login.hashCode());
-		result = prime * result
-				+ ((password == null) ? 0 : password.hashCode());
-		result = prime * result
-				+ ((authorities == null) ? 0 : authorities.hashCode());
+		result = prime * result + ((password == null) ? 0 : password.hashCode());
+		result = prime * result + ((authorities == null) ? 0 : authorities.hashCode());
 		result = prime * result + ((salt == null) ? 0 : salt.hashCode());
 		return result;
 	}
@@ -400,14 +483,9 @@ public class User extends AbstractEntityObject {
 	 */
 	@Override
 	public String toString() {
-		return "User [login=" + login + ", password=" + password
-				+ ", firstName=" + firstName + ", lastName=" + lastName
-				+ ", email=" + email + ", failedLoginAttempts="
-				+ failedLoginAttempts + ", accountNonExpired="
-				+ accountNonExpired + ", accountNonLocked=" + accountNonLocked
-				+ ", credentialsNonExpired=" + credentialsNonExpired
-				+ ", enabled=" + enabled + ", salt=" + salt + ", roles="
-				+ authorities + "]";
+		return "User [login=" + login + ", password=" + password + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", failedLoginAttempts=" + failedLoginAttempts
+				+ ", accountNonExpired=" + accountNonExpired + ", accountNonLocked=" + accountNonLocked + ", credentialsNonExpired=" + credentialsNonExpired + ", enabled=" + enabled + ", salt="
+				+ salt + ", roles=" + authorities + "]";
 	}
 
 }

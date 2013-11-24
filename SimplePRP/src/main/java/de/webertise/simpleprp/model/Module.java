@@ -1,6 +1,6 @@
 package de.webertise.simpleprp.model;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -31,15 +31,15 @@ public class Module extends AbstractEntityObject {
 
 	@ManyToMany
 	@JoinTable(name = "PRP_MODULE_RESOURCEROLE", joinColumns = { @JoinColumn(name = "MODULE_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "RESOURCEROLE_ID", referencedColumnName = "ID") })
-	private List<ResourceRole> resourceRoles;
+	private Set<ResourceRole> resourceRoles;
 
 	@ManyToMany
 	@JoinTable(name = "PRP_MODULE_RESOURCERESERVATION", joinColumns = { @JoinColumn(name = "MODULE_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "RESOURCERESERVATION_ID", referencedColumnName = "ID") })
-	private List<ResourceReservation> resourceReservations;
+	private Set<ResourceReservation> resourceReservations;
 
 	@ManyToMany
 	@JoinTable(name = "PRP_USER_MODULE", joinColumns = { @JoinColumn(name = "MODULE_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "USER_ID", referencedColumnName = "ID") })
-	private List<User> users;
+	private Set<User> users;
 
 	@ManyToOne
 	@JoinColumn(name = "PROJECT_ID", nullable = false)
@@ -86,8 +86,7 @@ public class Module extends AbstractEntityObject {
 	 */
 	@Override
 	public String toString() {
-		return "Client [name=" + name + ", toString()=" + super.toString()
-				+ "]";
+		return "Client [name=" + name + ", toString()=" + super.toString() + "]";
 	}
 
 	/*

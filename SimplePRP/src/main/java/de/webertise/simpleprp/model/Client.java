@@ -1,6 +1,6 @@
 package de.webertise.simpleprp.model;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -30,7 +30,7 @@ public class Client extends AbstractEntityObject {
 
 	@ManyToMany
 	@JoinTable(name = "PRP_USER_CLIENT", joinColumns = { @JoinColumn(name = "CLIENT_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "USER_ID", referencedColumnName = "ID") })
-	private List<User> users;
+	private Set<User> users;
 
 	// *************************************************************************
 	// * Constructors
@@ -73,8 +73,7 @@ public class Client extends AbstractEntityObject {
 	 */
 	@Override
 	public String toString() {
-		return "Client [name=" + name + ", toString()=" + super.toString()
-				+ "]";
+		return "Client [name=" + name + ", toString()=" + super.toString() + "]";
 	}
 
 	/*

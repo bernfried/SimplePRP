@@ -1,6 +1,6 @@
 package de.webertise.simpleprp.model;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -31,14 +31,14 @@ public class ResourceRole extends AbstractEntityObject {
 
 	@ManyToMany
 	@JoinTable(name = "PRP_MODULE_RESOURCEROLE", joinColumns = { @JoinColumn(name = "RESOURCEROLE_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "MODULE_ID", referencedColumnName = "ID") })
-	private List<Module> modules;
+	private Set<Module> modules;
 
 	@ManyToMany
 	@JoinTable(name = "PRP_USER_RESOURCEROLE", joinColumns = { @JoinColumn(name = "RESOURCEROLE_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "USER_ID", referencedColumnName = "ID") })
-	private List<User> users;
+	private Set<User> users;
 
 	@OneToMany(mappedBy = "resourceRole")
-	private List<ResourceReservation> resourceReservation;
+	private Set<ResourceReservation> resourceReservation;
 
 	// *************************************************************************
 	// * Constructors
