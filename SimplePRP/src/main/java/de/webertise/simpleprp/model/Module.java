@@ -25,8 +25,12 @@ public class Module extends AbstractEntityObject {
     // *******************************************************
 
     @Basic(optional = false)
-    @Column(name = "NAME", unique = true, nullable = false)
+    @Column(name = "NAME", unique = true, nullable = false, length = 100)
     private String name;
+
+    @Basic(optional = true)
+    @Column(name = "DESCRIPTION", length = 255)
+    private String description;
 
     // *******************************************************
     // * Relationships
@@ -77,6 +81,22 @@ public class Module extends AbstractEntityObject {
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * @return the description
+     */
+    @XmlElement
+    public String getDescription() {
+        return this.description;
+    }
+
+    /**
+     * @param description
+     *            the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     /**
@@ -154,7 +174,8 @@ public class Module extends AbstractEntityObject {
      */
     @Override
     public String toString() {
-        return "Client [name=" + name + ", toString()=" + super.toString() + "]";
+        return "Module [name=" + this.name + ", description=" + this.description + ", resourceRoles=" + this.resourceRoles + ", resourceReservations=" + this.resourceReservations + ", users="
+                + this.users + ", project=" + this.project + ", toString()=" + super.toString() + "]";
     }
 
     /*
@@ -166,7 +187,12 @@ public class Module extends AbstractEntityObject {
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((this.description == null) ? 0 : this.description.hashCode());
+        result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
+        result = prime * result + ((this.project == null) ? 0 : this.project.hashCode());
+        result = prime * result + ((this.resourceReservations == null) ? 0 : this.resourceReservations.hashCode());
+        result = prime * result + ((this.resourceRoles == null) ? 0 : this.resourceRoles.hashCode());
+        result = prime * result + ((this.users == null) ? 0 : this.users.hashCode());
         return result;
     }
 
@@ -184,10 +210,35 @@ public class Module extends AbstractEntityObject {
         if (getClass() != obj.getClass())
             return false;
         Module other = (Module) obj;
-        if (name == null) {
+        if (this.description == null) {
+            if (other.description != null)
+                return false;
+        } else if (!this.description.equals(other.description))
+            return false;
+        if (this.name == null) {
             if (other.name != null)
                 return false;
-        } else if (!name.equals(other.name))
+        } else if (!this.name.equals(other.name))
+            return false;
+        if (this.project == null) {
+            if (other.project != null)
+                return false;
+        } else if (!this.project.equals(other.project))
+            return false;
+        if (this.resourceReservations == null) {
+            if (other.resourceReservations != null)
+                return false;
+        } else if (!this.resourceReservations.equals(other.resourceReservations))
+            return false;
+        if (this.resourceRoles == null) {
+            if (other.resourceRoles != null)
+                return false;
+        } else if (!this.resourceRoles.equals(other.resourceRoles))
+            return false;
+        if (this.users == null) {
+            if (other.users != null)
+                return false;
+        } else if (!this.users.equals(other.users))
             return false;
         return true;
     }

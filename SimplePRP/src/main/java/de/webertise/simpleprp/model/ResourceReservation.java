@@ -1,5 +1,7 @@
 package de.webertise.simpleprp.model;
 
+import java.util.Date;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,6 +19,12 @@ import de.webertise.simpleprp.model.general.AbstractEntityObject;
 public class ResourceReservation extends AbstractEntityObject {
 
     // *******************************************************
+    // * Constants
+    // *******************************************************
+    public final static int STATUS_REQUESTED = 1;
+    public final static int STATUS_CONFIRMED = 2;
+
+    // *******************************************************
     // * Specific Entity Properties
     // *******************************************************
 
@@ -24,16 +32,34 @@ public class ResourceReservation extends AbstractEntityObject {
     @Column(name = "NAME", unique = true, nullable = false)
     private String name;
 
+    @Basic(optional = false)
+    @Column(name = "STATUS")
+    private int status;
+
+    @Basic(optional = false)
+    @Column(name = "DAY")
+    private Date day;
+
+    // yyyyMM
+    @Basic(optional = false)
+    @Column(name = "CALYEARWEEK")
+    private String calYearWeek;
+
+    // 0 - 100%
+    @Basic(optional = false)
+    @Column(name = "RESERVEDRATIO")
+    private float reservedRatio;
+
     // *******************************************************
     // * Relationships
     // *******************************************************
 
     @ManyToOne
-    @JoinColumn(name = "RESOURCEROLE_ID", nullable = false)
+    @JoinColumn(name = "RESOURCEROLE_ID")
     protected ResourceRole resourceRole;
 
     @ManyToOne
-    @JoinColumn(name = "USER_ID", nullable = false)
+    @JoinColumn(name = "USER_ID")
     protected User user;
 
     @ManyToOne
@@ -69,6 +95,70 @@ public class ResourceReservation extends AbstractEntityObject {
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * @return the status
+     */
+    @XmlElement
+    public int getStatus() {
+        return this.status;
+    }
+
+    /**
+     * @param status
+     *            the status to set
+     */
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    /**
+     * @return the day
+     */
+    @XmlElement
+    public Date getDay() {
+        return this.day;
+    }
+
+    /**
+     * @param day
+     *            the day to set
+     */
+    public void setDay(Date day) {
+        this.day = day;
+    }
+
+    /**
+     * @return the calYearWeek
+     */
+    @XmlElement
+    public String getCalYearWeek() {
+        return this.calYearWeek;
+    }
+
+    /**
+     * @param calYearWeek
+     *            the calYearWeek to set
+     */
+    public void setCalYearWeek(String calYearWeek) {
+        this.calYearWeek = calYearWeek;
+    }
+
+    /**
+     * @return the reservedRatio
+     */
+    @XmlElement
+    public float getReservedRatio() {
+        return this.reservedRatio;
+    }
+
+    /**
+     * @param reservedRatio
+     *            the reservedRatio to set
+     */
+    public void setReservedRatio(float reservedRatio) {
+        this.reservedRatio = reservedRatio;
     }
 
     /**
@@ -130,7 +220,8 @@ public class ResourceReservation extends AbstractEntityObject {
      */
     @Override
     public String toString() {
-        return "Role [name=" + name + ", toString()=" + super.toString() + "]";
+        return "ResourceReservation [name=" + this.name + ", status=" + this.status + ", day=" + this.day + ", calYearWeek=" + this.calYearWeek + ", reservedRatio=" + this.reservedRatio
+                + ", resourceRole=" + this.resourceRole + ", user=" + this.user + ", module=" + this.module + ", toString()=" + super.toString() + "]";
     }
 
     /*
@@ -142,7 +233,14 @@ public class ResourceReservation extends AbstractEntityObject {
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((this.calYearWeek == null) ? 0 : this.calYearWeek.hashCode());
+        result = prime * result + ((this.day == null) ? 0 : this.day.hashCode());
+        result = prime * result + ((this.module == null) ? 0 : this.module.hashCode());
+        result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
+        result = prime * result + Float.floatToIntBits(this.reservedRatio);
+        result = prime * result + ((this.resourceRole == null) ? 0 : this.resourceRole.hashCode());
+        result = prime * result + this.status;
+        result = prime * result + ((this.user == null) ? 0 : this.user.hashCode());
         return result;
     }
 
@@ -160,10 +258,39 @@ public class ResourceReservation extends AbstractEntityObject {
         if (getClass() != obj.getClass())
             return false;
         ResourceReservation other = (ResourceReservation) obj;
-        if (name == null) {
+        if (this.calYearWeek == null) {
+            if (other.calYearWeek != null)
+                return false;
+        } else if (!this.calYearWeek.equals(other.calYearWeek))
+            return false;
+        if (this.day == null) {
+            if (other.day != null)
+                return false;
+        } else if (!this.day.equals(other.day))
+            return false;
+        if (this.module == null) {
+            if (other.module != null)
+                return false;
+        } else if (!this.module.equals(other.module))
+            return false;
+        if (this.name == null) {
             if (other.name != null)
                 return false;
-        } else if (!name.equals(other.name))
+        } else if (!this.name.equals(other.name))
+            return false;
+        if (Float.floatToIntBits(this.reservedRatio) != Float.floatToIntBits(other.reservedRatio))
+            return false;
+        if (this.resourceRole == null) {
+            if (other.resourceRole != null)
+                return false;
+        } else if (!this.resourceRole.equals(other.resourceRole))
+            return false;
+        if (this.status != other.status)
+            return false;
+        if (this.user == null) {
+            if (other.user != null)
+                return false;
+        } else if (!this.user.equals(other.user))
             return false;
         return true;
     }

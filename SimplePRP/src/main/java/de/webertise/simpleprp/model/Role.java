@@ -24,8 +24,12 @@ public class Role extends AbstractEntityObject {
     // *******************************************************
 
     @Basic(optional = false)
-    @Column(name = "NAME", unique = true, nullable = false)
+    @Column(name = "NAME", unique = true, nullable = false, length = 100)
     private String name;
+
+    @Basic(optional = true)
+    @Column(name = "DESCRIPTION", length = 255)
+    private String description;
 
     // *******************************************************
     // * Relationships
@@ -67,6 +71,22 @@ public class Role extends AbstractEntityObject {
     }
 
     /**
+     * @return the description
+     */
+    @XmlElement
+    public String getDescription() {
+        return this.description;
+    }
+
+    /**
+     * @param description
+     *            the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /**
      * @return the users
      */
     @XmlElement(name = "users")
@@ -93,7 +113,7 @@ public class Role extends AbstractEntityObject {
      */
     @Override
     public String toString() {
-        return "Role [name=" + name + ", toString()=" + super.toString() + "]";
+        return "Role [name=" + this.name + ", description=" + this.description + ", users=" + this.users + ", toString()=" + super.toString() + "]";
     }
 
     /*
@@ -105,7 +125,9 @@ public class Role extends AbstractEntityObject {
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((this.description == null) ? 0 : this.description.hashCode());
+        result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
+        result = prime * result + ((this.users == null) ? 0 : this.users.hashCode());
         return result;
     }
 
@@ -123,10 +145,20 @@ public class Role extends AbstractEntityObject {
         if (getClass() != obj.getClass())
             return false;
         Role other = (Role) obj;
-        if (name == null) {
+        if (this.description == null) {
+            if (other.description != null)
+                return false;
+        } else if (!this.description.equals(other.description))
+            return false;
+        if (this.name == null) {
             if (other.name != null)
                 return false;
-        } else if (!name.equals(other.name))
+        } else if (!this.name.equals(other.name))
+            return false;
+        if (this.users == null) {
+            if (other.users != null)
+                return false;
+        } else if (!this.users.equals(other.users))
             return false;
         return true;
     }

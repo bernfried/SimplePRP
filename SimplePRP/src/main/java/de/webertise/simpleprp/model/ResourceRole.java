@@ -25,8 +25,12 @@ public class ResourceRole extends AbstractEntityObject {
     // *******************************************************
 
     @Basic(optional = false)
-    @Column(name = "NAME", unique = true, nullable = false)
+    @Column(name = "NAME", unique = true, nullable = false, length = 100)
     private String name;
+
+    @Basic(optional = true)
+    @Column(name = "DESCRIPTION", length = 255)
+    private String description;
 
     // *******************************************************
     // * Relationships
