@@ -1,13 +1,8 @@
 package de.webertise.simpleprp.model;
 
-import java.util.Set;
-
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -34,10 +29,6 @@ public class Role extends AbstractEntityObject {
     // *******************************************************
     // * Relationships
     // *******************************************************
-
-    @ManyToMany
-    @JoinTable(name = "PRP_USER_ROLE", joinColumns = { @JoinColumn(name = "ROLE_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "USER_ID", referencedColumnName = "ID") })
-    private Set<User> users;
 
     // *************************************************************************
     // * Constructors
@@ -86,22 +77,6 @@ public class Role extends AbstractEntityObject {
         this.description = description;
     }
 
-    /**
-     * @return the users
-     */
-    @XmlElement(name = "users")
-    public Set<User> getUsers() {
-        return this.users;
-    }
-
-    /**
-     * @param users
-     *            the users to set
-     */
-    public void setUsers(Set<User> users) {
-        this.users = users;
-    }
-
     // *************************************************************************
     // * General Methods
     // *************************************************************************
@@ -113,7 +88,7 @@ public class Role extends AbstractEntityObject {
      */
     @Override
     public String toString() {
-        return "Role [name=" + this.name + ", description=" + this.description + ", users=" + this.users + ", toString()=" + super.toString() + "]";
+        return "Role [name=" + this.name + ", description=" + this.description + ", toString()=" + super.toString() + "]";
     }
 
     /*
@@ -127,7 +102,6 @@ public class Role extends AbstractEntityObject {
         int result = super.hashCode();
         result = prime * result + ((this.description == null) ? 0 : this.description.hashCode());
         result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
-        result = prime * result + ((this.users == null) ? 0 : this.users.hashCode());
         return result;
     }
 
@@ -154,11 +128,6 @@ public class Role extends AbstractEntityObject {
             if (other.name != null)
                 return false;
         } else if (!this.name.equals(other.name))
-            return false;
-        if (this.users == null) {
-            if (other.users != null)
-                return false;
-        } else if (!this.users.equals(other.users))
             return false;
         return true;
     }

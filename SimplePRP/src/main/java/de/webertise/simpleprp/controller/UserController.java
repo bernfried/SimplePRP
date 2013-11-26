@@ -1,6 +1,7 @@
 package de.webertise.simpleprp.controller;
 
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import de.webertise.simpleprp.helper.xml.JaxbList;
+import de.webertise.simpleprp.model.Role;
 import de.webertise.simpleprp.model.User;
+import de.webertise.simpleprp.service.RoleService;
 import de.webertise.simpleprp.service.UserService;
 
 /**
@@ -32,6 +36,9 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private RoleService roleService;
+
     /**
      * Get a user by ID
      * 
@@ -39,10 +46,10 @@ public class UserController {
      *            Id of the user
      * @return User
      */
-    @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{userId}", method = RequestMethod.GET, produces = { "application/json", "application/xml" })
     @ResponseBody
-    public ResponseEntity<User> getById(@PathVariable Long userId) {
-        logger.info("UserController - getById: userId = '" + userId + "'");
+    public ResponseEntity<User> getUserById(@PathVariable Long userId) {
+        logger.info("UserController - getById: getUserById = '" + userId + "'");
 
         // get the user by id
         User user = userService.get(userId);
@@ -61,17 +68,19 @@ public class UserController {
      * 
      * @return List of Users
      */
-    @RequestMapping(method = RequestMethod.GET, produces = { "application/xml", "application/json" })
+    @RequestMapping(method = RequestMethod.GET, produces = { "application/json", "application/xml" })
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody
-    List<User> getAll() {
-        logger.info("UserController - getAll: reached");
+    ResponseEntity<JaxbList<User>> getAllUsers() {
+        logger.info("UserController - getAllUsers: reached");
 
         // get the user by id
         List<User> users = userService.findUsers();
 
+        JaxbList<User> jaxbList = new JaxbList<User>(users);
+
         // return user object as json / xml
-        return users;
+        return new ResponseEntity<JaxbList<User>>(jaxbList, HttpStatus.OK);
     }
 
     /**
@@ -81,9 +90,9 @@ public class UserController {
      *            Id of the user to be deleted
      * @return Response with correct http status code
      */
-    @RequestMapping(value = "/{userId}", method = RequestMethod.DELETE)
-    public ResponseEntity<User> delete(@PathVariable Long userId) {
-        logger.info("UserController - delete: userId = '" + userId + "'");
+    @RequestMapping(value = "/{userId}", method = RequestMethod.DELETE, produces = { "application/json", "application/xml" })
+    public ResponseEntity<User> deleteUserById(@PathVariable Long userId) {
+        logger.info("UserController - delete: deleteUserById = '" + userId + "'");
 
         // check if id exists
         if (userId != null && !userService.exists(userId)) {
@@ -113,9 +122,9 @@ public class UserController {
      *            Uri builder
      * @return Newly created user
      */
-    @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<User> create(@RequestBody User user, UriComponentsBuilder builder) {
-        logger.info("UserController - create: reached");
+    @RequestMapping(method = RequestMethod.POST, produces = { "application/json", "application/xml" })
+    public ResponseEntity<User> createUser(@RequestBody User user, UriComponentsBuilder builder) {
+        logger.info("UserController - createUser: reached");
 
         // check if an user with that email and login name already exists
         User existsUser = userService.getByEmail(user.getEmail());
@@ -139,9 +148,19 @@ public class UserController {
         return new ResponseEntity<User>(newUser, headers, HttpStatus.CREATED);
     }
 
-    @RequestMapping(method = RequestMethod.PUT)
-    public ResponseEntity<User> update(@RequestBody User user, UriComponentsBuilder builder) {
-        logger.info("UserController - update: reached");
+    /**
+     * Updates an existing user.
+     * 
+     * @param user
+     *            Json or XML string send as body of a http request.
+     * @param builder
+     *            UriComponentBuilder for building the location url of the
+     *            response header.
+     * @return Return the updated user object
+     */
+    @RequestMapping(method = RequestMethod.PUT, produces = { "application/json", "application/xml" })
+    public ResponseEntity<User> updateUser(@RequestBody User user, UriComponentsBuilder builder) {
+        logger.info("UserController - updateUser: reached");
 
         // check if an user with that email and login name already exists
         User existsUser = userService.getByEmail(user.getEmail());
@@ -149,12 +168,83 @@ public class UserController {
             return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
         }
 
-        // TODO: add all relevant properties
+        // Update all changeable user properties
         existsUser.setFirstName(user.getFirstName());
+        existsUser.setLastName(user.getLastName());
+        existsUser.setChangedAt(user.getChangedAt());
+        existsUser.setChangedBy(user.getChangedBy());
+
+        User updatedUser = userService.save(existsUser);
 
         // set http header (location)
         HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(builder.path("/users/{id}").buildAndExpand(existsUser.getId()).toUri());
+        headers.setLocation(builder.path("/users/{id}").buildAndExpand(updatedUser.getId()).toUri());
+
+        // return new user
+        return new ResponseEntity<User>(updatedUser, headers, HttpStatus.CREATED);
+    }
+
+    /**
+     * 
+     * 
+     * @param userId
+     * @param roleId
+     * @param builder
+     * @return
+     */
+    @RequestMapping(value = "/{userId}/roles/{roleId}", method = RequestMethod.POST, produces = { "application/json", "application/xml" })
+    public ResponseEntity<User> addRoleToUser(@PathVariable Long userId, @PathVariable Long roleId, UriComponentsBuilder builder) {
+        logger.info("UserController - addRoleToUser: reached");
+
+        // check if an user with id exists
+        User updatedUser = null;
+        User existsUser = userService.get(userId);
+        if (existsUser == null) {
+            return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+        } else {
+            Set<Role> roles = existsUser.getAuthorities();
+            Role role = roleService.get(roleId);
+            if (role == null) {
+                return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+            } else {
+                roles.add(role);
+                existsUser.setAuthorities(roles);
+                updatedUser = userService.save(existsUser);
+            }
+        }
+
+        // set http header (location)
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(builder.path("/users/{id}").buildAndExpand(updatedUser.getId()).toUri());
+
+        // return new user
+        return new ResponseEntity<User>(existsUser, headers, HttpStatus.CREATED);
+    }
+
+    @RequestMapping(value = "/{userId}/roles/{roleId}", method = RequestMethod.DELETE, produces = { "application/json", "application/xml" })
+    public ResponseEntity<User> removeRoleFromUser(@PathVariable Long userId, @PathVariable Long roleId, UriComponentsBuilder builder) {
+        logger.info("UserController - removeRoleFromUser: reached");
+
+        // check if an user with id exists
+        User updatedUser = null;
+        User existsUser = userService.get(userId);
+        if (existsUser == null) {
+            return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+        } else {
+            Set<Role> roles = existsUser.getAuthorities();
+            Role role = roleService.get(roleId);
+            if (role == null) {
+                return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+            } else {
+                roles.remove(role);
+                existsUser.setAuthorities(roles);
+                updatedUser = userService.save(existsUser);
+            }
+        }
+
+        // set http header (location)
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(builder.path("/users/{id}").buildAndExpand(updatedUser.getId()).toUri());
 
         // return new user
         return new ResponseEntity<User>(existsUser, headers, HttpStatus.CREATED);

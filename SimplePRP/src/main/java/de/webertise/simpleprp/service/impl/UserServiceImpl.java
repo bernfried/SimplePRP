@@ -15,80 +15,80 @@ import de.webertise.simpleprp.model.dao.UserDao;
 import de.webertise.simpleprp.service.UserService;
 
 @Service("userService")
-@Transactional(readOnly = true)
-public class UserServiceImpl implements UserService{
-	private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+@Transactional
+public class UserServiceImpl implements UserService {
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
-	@Autowired
-	private UserDao userDao;
+    @Autowired
+    private UserDao userDao;
 
-	@Override
-	public User get(Long id) {
-		return userDao.findOne(id);
-	}
+    @Override
+    public User get(Long id) {
+        return userDao.findOne(id);
+    }
 
-	@Override
-	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
-	public void remove(Long id) {
-		userDao.delete(id);
-	}
+    @Override
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
+    public void remove(Long id) {
+        userDao.delete(id);
+    }
 
-	@Override
-	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
-	public User save(User user) {
-		
-		logger.debug("UserServiceImpl - save: plainPassword: " + user.getPlainPassword());
+    @Override
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
+    public User save(User user) {
 
-		// get existing user for salt string
-		if (user.getId() == 0L || user.getPlainPassword() != null) {
-			// create salt and password for inserted or updated user
-			ShaPasswordEncoder pwdEnc = new ShaPasswordEncoder();
-			user.setSalt(user.getLogin() + "-" + user.getEmail());
-			user.setPassword(pwdEnc.encodePassword(user.getPlainPassword(), user.getSalt()));
-		}
-		
-		// save new or updated user
-		return userDao.save(user);
-	}
+        logger.debug("UserServiceImpl - save: plainPassword: " + user.getPlainPassword());
 
-	@Override
-	public User getByLogin(String login) {
-		return userDao.getByLogin(login);
-	}
+        // get existing user for salt string
+        if (user.getId() == 0L || user.getPlainPassword() != null) {
+            // create salt and password for inserted or updated user
+            ShaPasswordEncoder pwdEnc = new ShaPasswordEncoder();
+            user.setSalt(user.getLogin() + "-" + user.getEmail());
+            user.setPassword(pwdEnc.encodePassword(user.getPlainPassword(), user.getSalt()));
+        }
 
-	@Override
-	public User getByEmail(String email) {
-		return userDao.getByEmail(email);
-	}
+        // save new or updated user
+        return userDao.save(user);
+    }
 
-	@Override
-	public List<User> findByEnabled(boolean enabled) {
-		return userDao.findByEnabled(enabled);
-	}
+    @Override
+    public User getByLogin(String login) {
+        return userDao.getByLogin(login);
+    }
 
-	@Override
-	public List<User> findByAccountNonExpired(boolean accountNonExpired) {
-		return userDao.findByAccountNonExpired(accountNonExpired);
-	}
+    @Override
+    public User getByEmail(String email) {
+        return userDao.getByEmail(email);
+    }
 
-	@Override
-	public List<User> findByAccountNonLocked(boolean accountNonLocked) {
-		return userDao.findByAccountNonLocked(accountNonLocked);
-	}
+    @Override
+    public List<User> findByEnabled(boolean enabled) {
+        return userDao.findByEnabled(enabled);
+    }
 
-	@Override
-	public List<User> findByCredentialsNonExpired(boolean credentialsNonExpired) {
-		return userDao.findByCredentialsNonExpired(credentialsNonExpired);
-	}
+    @Override
+    public List<User> findByAccountNonExpired(boolean accountNonExpired) {
+        return userDao.findByAccountNonExpired(accountNonExpired);
+    }
 
-	@Override
-	public List<User> findUsers() {
-		return (List<User>) userDao.findAll();
-	}
+    @Override
+    public List<User> findByAccountNonLocked(boolean accountNonLocked) {
+        return userDao.findByAccountNonLocked(accountNonLocked);
+    }
 
-	@Override
-	public boolean exists(Long id) {
-		return userDao.exists(id);
-	}
+    @Override
+    public List<User> findByCredentialsNonExpired(boolean credentialsNonExpired) {
+        return userDao.findByCredentialsNonExpired(credentialsNonExpired);
+    }
+
+    @Override
+    public List<User> findUsers() {
+        return (List<User>) userDao.findAll();
+    }
+
+    @Override
+    public boolean exists(Long id) {
+        return userDao.exists(id);
+    }
 
 }

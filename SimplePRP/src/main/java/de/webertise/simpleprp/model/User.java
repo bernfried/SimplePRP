@@ -14,13 +14,17 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import de.webertise.simpleprp.model.general.AbstractEntityObject;
 
 @Entity
 @Table(name = "PRP_USER", uniqueConstraints = { @UniqueConstraint(columnNames = { "login" }), @UniqueConstraint(columnNames = { "email" }) })
-@XmlRootElement(name = "user")
+@XmlRootElement
 public class User extends AbstractEntityObject {
 
     // *******************************************************
@@ -97,6 +101,7 @@ public class User extends AbstractEntityObject {
     // * Transient fields
     // *******************************************************
     @Transient
+    @XmlTransient
     private String plainPassword;
 
     // *******************************************************
@@ -153,7 +158,8 @@ public class User extends AbstractEntityObject {
     /**
      * @return the password
      */
-    @XmlElement
+    @XmlTransient
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
@@ -281,6 +287,8 @@ public class User extends AbstractEntityObject {
     /**
      * @return the salt
      */
+    @XmlTransient
+    @JsonIgnore
     public String getSalt() {
         return salt;
     }
@@ -296,6 +304,8 @@ public class User extends AbstractEntityObject {
     /**
      * @return the plainPassword
      */
+    @XmlTransient
+    @JsonIgnore
     public String getPlainPassword() {
         return plainPassword;
     }
@@ -311,6 +321,8 @@ public class User extends AbstractEntityObject {
     /**
      * @return the roles
      */
+    @XmlElementWrapper(name = "roles")
+    @XmlElement(name = "role")
     public Set<Role> getAuthorities() {
         return authorities;
     }
@@ -319,7 +331,6 @@ public class User extends AbstractEntityObject {
      * @param roles
      *            the roles to set
      */
-    @XmlElement(name = "authorities")
     public void setAuthorities(Set<Role> roles) {
         this.authorities = roles;
     }
@@ -327,7 +338,8 @@ public class User extends AbstractEntityObject {
     /**
      * @return the clients
      */
-    @XmlElement(name = "clients")
+    @XmlElementWrapper(name = "clients")
+    @XmlElement(name = "client")
     public Set<Client> getClients() {
         return this.clients;
     }
@@ -343,7 +355,8 @@ public class User extends AbstractEntityObject {
     /**
      * @return the modules
      */
-    @XmlElement(name = "modules")
+    @XmlElementWrapper(name = "modules")
+    @XmlElement(name = "module")
     public Set<Module> getModules() {
         return this.modules;
     }
@@ -359,7 +372,8 @@ public class User extends AbstractEntityObject {
     /**
      * @return the projectsAsMember
      */
-    @XmlElement(name = "projectsasmember")
+    @XmlElementWrapper(name = "projectsasmember")
+    @XmlElement(name = "projectasmember")
     public Set<Project> getProjectsAsMember() {
         return this.projectsAsMember;
     }
@@ -375,7 +389,8 @@ public class User extends AbstractEntityObject {
     /**
      * @return the projectsAsPrjMgr
      */
-    @XmlElement(name = "projectsasprjmgr")
+    @XmlElementWrapper(name = "projectsasprjmgr")
+    @XmlElement(name = "projectasprjmgr")
     public Set<Project> getProjectsAsPrjMgr() {
         return this.projectsAsPrjMgr;
     }
@@ -391,7 +406,8 @@ public class User extends AbstractEntityObject {
     /**
      * @return the projectsAsAdmin
      */
-    @XmlElement(name = "projectsasadmin")
+    @XmlElementWrapper(name = "projectsasadmin")
+    @XmlElement(name = "projectasadmin")
     public Set<Project> getProjectsAsAdmin() {
         return this.projectsAsAdmin;
     }
@@ -407,7 +423,8 @@ public class User extends AbstractEntityObject {
     /**
      * @return the resourceRoles
      */
-    @XmlElement(name = "resourceroles")
+    @XmlElementWrapper(name = "resourceroles")
+    @XmlElement(name = "resourcerole")
     public Set<ResourceRole> getResourceRoles() {
         return this.resourceRoles;
     }
@@ -423,7 +440,8 @@ public class User extends AbstractEntityObject {
     /**
      * @return the resourceReservations
      */
-    @XmlElement(name = "resourcereservations")
+    @XmlElementWrapper(name = "resourcereservations")
+    @XmlElement(name = "resourcereservation")
     public Set<ResourceReservation> getResourceReservations() {
         return this.resourceReservations;
     }
@@ -447,8 +465,6 @@ public class User extends AbstractEntityObject {
         int result = super.hashCode();
         result = prime * result + (this.accountNonExpired ? 1231 : 1237);
         result = prime * result + (this.accountNonLocked ? 1231 : 1237);
-        result = prime * result + ((this.authorities == null) ? 0 : this.authorities.hashCode());
-        result = prime * result + ((this.clients == null) ? 0 : this.clients.hashCode());
         result = prime * result + (this.credentialsNonExpired ? 1231 : 1237);
         result = prime * result + ((this.email == null) ? 0 : this.email.hashCode());
         result = prime * result + (this.enabled ? 1231 : 1237);
@@ -456,14 +472,8 @@ public class User extends AbstractEntityObject {
         result = prime * result + ((this.firstName == null) ? 0 : this.firstName.hashCode());
         result = prime * result + ((this.lastName == null) ? 0 : this.lastName.hashCode());
         result = prime * result + ((this.login == null) ? 0 : this.login.hashCode());
-        result = prime * result + ((this.modules == null) ? 0 : this.modules.hashCode());
         result = prime * result + ((this.password == null) ? 0 : this.password.hashCode());
         result = prime * result + ((this.plainPassword == null) ? 0 : this.plainPassword.hashCode());
-        result = prime * result + ((this.projectsAsAdmin == null) ? 0 : this.projectsAsAdmin.hashCode());
-        result = prime * result + ((this.projectsAsMember == null) ? 0 : this.projectsAsMember.hashCode());
-        result = prime * result + ((this.projectsAsPrjMgr == null) ? 0 : this.projectsAsPrjMgr.hashCode());
-        result = prime * result + ((this.resourceReservations == null) ? 0 : this.resourceReservations.hashCode());
-        result = prime * result + ((this.resourceRoles == null) ? 0 : this.resourceRoles.hashCode());
         result = prime * result + ((this.salt == null) ? 0 : this.salt.hashCode());
         return result;
     }
@@ -581,7 +591,7 @@ public class User extends AbstractEntityObject {
                 + this.failedLoginAttempts + ", accountNonExpired=" + this.accountNonExpired + ", accountNonLocked=" + this.accountNonLocked + ", credentialsNonExpired=" + this.credentialsNonExpired
                 + ", enabled=" + this.enabled + ", salt=" + this.salt + ", authorities=" + this.authorities + ", clients=" + this.clients + ", modules=" + this.modules + ", projectsAsMember="
                 + this.projectsAsMember + ", projectsAsPrjMgr=" + this.projectsAsPrjMgr + ", projectsAsAdmin=" + this.projectsAsAdmin + ", resourceRoles=" + this.resourceRoles
-                + ", resourceReservations=" + this.resourceReservations + ", plainPassword=" + this.plainPassword + ", toString()=" + super.toString() + "]";
+                + ", resourceReservations=" + this.resourceReservations + ", plainPassword=" + this.plainPassword + "]";
     }
 
 }
