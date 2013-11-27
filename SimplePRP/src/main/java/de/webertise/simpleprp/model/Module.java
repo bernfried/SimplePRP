@@ -5,6 +5,7 @@ import java.util.Set;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -12,6 +13,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import de.webertise.simpleprp.model.general.AbstractEntityObject;
 
@@ -36,19 +40,19 @@ public class Module extends AbstractEntityObject {
     // * Relationships
     // *******************************************************
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "PRP_MODULE_RESOURCEROLE", joinColumns = { @JoinColumn(name = "MODULE_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "RESOURCEROLE_ID", referencedColumnName = "ID") })
     private Set<ResourceRole> resourceRoles;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "PRP_MODULE_RESOURCERESERVATION", joinColumns = { @JoinColumn(name = "MODULE_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "RESOURCERESERVATION_ID", referencedColumnName = "ID") })
     private Set<ResourceReservation> resourceReservations;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "PRP_USER_MODULE", joinColumns = { @JoinColumn(name = "MODULE_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "USER_ID", referencedColumnName = "ID") })
     private Set<User> users;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PROJECT_ID", nullable = false)
     protected Project project;
 
@@ -102,7 +106,8 @@ public class Module extends AbstractEntityObject {
     /**
      * @return the resourceRoles
      */
-    @XmlElement(name = "resourceroles")
+    @XmlTransient
+    @JsonIgnore
     public Set<ResourceRole> getResourceRoles() {
         return this.resourceRoles;
     }
@@ -118,7 +123,8 @@ public class Module extends AbstractEntityObject {
     /**
      * @return the resourceReservations
      */
-    @XmlElement(name = "resourcereservations")
+    @XmlTransient
+    @JsonIgnore
     public Set<ResourceReservation> getResourceReservations() {
         return this.resourceReservations;
     }
@@ -134,7 +140,8 @@ public class Module extends AbstractEntityObject {
     /**
      * @return the users
      */
-    @XmlElement(name = "users")
+    @XmlTransient
+    @JsonIgnore
     public Set<User> getUsers() {
         return this.users;
     }
@@ -150,7 +157,8 @@ public class Module extends AbstractEntityObject {
     /**
      * @return the project
      */
-    @XmlElement(name = "project")
+    @XmlTransient
+    @JsonIgnore
     public Project getProject() {
         return this.project;
     }
@@ -174,8 +182,7 @@ public class Module extends AbstractEntityObject {
      */
     @Override
     public String toString() {
-        return "Module [name=" + this.name + ", description=" + this.description + ", resourceRoles=" + this.resourceRoles + ", resourceReservations=" + this.resourceReservations + ", users="
-                + this.users + ", project=" + this.project + ", toString()=" + super.toString() + "]";
+        return "Module [name=" + this.name + ", description=" + this.description + ", toString()=" + super.toString() + "]";
     }
 
     /*
@@ -189,10 +196,6 @@ public class Module extends AbstractEntityObject {
         int result = super.hashCode();
         result = prime * result + ((this.description == null) ? 0 : this.description.hashCode());
         result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
-        result = prime * result + ((this.project == null) ? 0 : this.project.hashCode());
-        result = prime * result + ((this.resourceReservations == null) ? 0 : this.resourceReservations.hashCode());
-        result = prime * result + ((this.resourceRoles == null) ? 0 : this.resourceRoles.hashCode());
-        result = prime * result + ((this.users == null) ? 0 : this.users.hashCode());
         return result;
     }
 
@@ -219,26 +222,6 @@ public class Module extends AbstractEntityObject {
             if (other.name != null)
                 return false;
         } else if (!this.name.equals(other.name))
-            return false;
-        if (this.project == null) {
-            if (other.project != null)
-                return false;
-        } else if (!this.project.equals(other.project))
-            return false;
-        if (this.resourceReservations == null) {
-            if (other.resourceReservations != null)
-                return false;
-        } else if (!this.resourceReservations.equals(other.resourceReservations))
-            return false;
-        if (this.resourceRoles == null) {
-            if (other.resourceRoles != null)
-                return false;
-        } else if (!this.resourceRoles.equals(other.resourceRoles))
-            return false;
-        if (this.users == null) {
-            if (other.users != null)
-                return false;
-        } else if (!this.users.equals(other.users))
             return false;
         return true;
     }

@@ -5,6 +5,7 @@ import java.util.Set;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -12,6 +13,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import de.webertise.simpleprp.model.general.AbstractEntityObject;
 
@@ -36,15 +40,15 @@ public class ResourceRole extends AbstractEntityObject {
     // * Relationships
     // *******************************************************
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "PRP_MODULE_RESOURCEROLE", joinColumns = { @JoinColumn(name = "RESOURCEROLE_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "MODULE_ID", referencedColumnName = "ID") })
     private Set<Module> modules;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "PRP_USER_RESOURCEROLE", joinColumns = { @JoinColumn(name = "RESOURCEROLE_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "USER_ID", referencedColumnName = "ID") })
     private Set<User> users;
 
-    @OneToMany(mappedBy = "resourceRole")
+    @OneToMany(mappedBy = "resourceRole", fetch = FetchType.LAZY)
     private Set<ResourceReservation> resourceReservation;
 
     // *************************************************************************
@@ -81,7 +85,8 @@ public class ResourceRole extends AbstractEntityObject {
     /**
      * @return the modules
      */
-    @XmlElement(name = "modules")
+    @XmlTransient
+    @JsonIgnore
     public Set<Module> getModules() {
         return this.modules;
     }
@@ -97,7 +102,8 @@ public class ResourceRole extends AbstractEntityObject {
     /**
      * @return the users
      */
-    @XmlElement(name = "users")
+    @XmlTransient
+    @JsonIgnore
     public Set<User> getUsers() {
         return this.users;
     }
@@ -113,7 +119,8 @@ public class ResourceRole extends AbstractEntityObject {
     /**
      * @return the resourceReservation
      */
-    @XmlElement(name = "resourcereserverations")
+    @XmlTransient
+    @JsonIgnore
     public Set<ResourceReservation> getResourceReservation() {
         return this.resourceReservation;
     }

@@ -10,6 +10,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import de.webertise.simpleprp.model.general.AbstractEntityObject;
 
@@ -34,7 +37,7 @@ public class Currency extends AbstractEntityObject {
     // * Relationships
     // *******************************************************
 
-    @OneToMany(mappedBy = "currency", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "currency", fetch = FetchType.LAZY)
     private Set<Project> projects;
 
     // *************************************************************************
@@ -87,7 +90,8 @@ public class Currency extends AbstractEntityObject {
     /**
      * @return the projects
      */
-    @XmlElement(name = "projects")
+    @XmlTransient
+    @JsonIgnore
     public Set<Project> getProjects() {
         return this.projects;
     }
@@ -111,7 +115,7 @@ public class Currency extends AbstractEntityObject {
      */
     @Override
     public String toString() {
-        return "Currency [name=" + this.name + ", toEuroRate=" + this.toEuroRate + ", projects=" + this.projects + ", toString()=" + super.toString() + "]";
+        return "Currency [name=" + this.name + ", toEuroRate=" + this.toEuroRate + ", toString()=" + super.toString() + "]";
     }
 
     /*
@@ -124,7 +128,6 @@ public class Currency extends AbstractEntityObject {
         final int prime = 31;
         int result = super.hashCode();
         result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
-        result = prime * result + ((this.projects == null) ? 0 : this.projects.hashCode());
         result = prime * result + Float.floatToIntBits(this.toEuroRate);
         return result;
     }
@@ -147,11 +150,6 @@ public class Currency extends AbstractEntityObject {
             if (other.name != null)
                 return false;
         } else if (!this.name.equals(other.name))
-            return false;
-        if (this.projects == null) {
-            if (other.projects != null)
-                return false;
-        } else if (!this.projects.equals(other.projects))
             return false;
         if (Float.floatToIntBits(this.toEuroRate) != Float.floatToIntBits(other.toEuroRate))
             return false;

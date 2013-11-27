@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -14,6 +15,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import de.webertise.simpleprp.model.general.AbstractEntityObject;
 
@@ -73,26 +77,26 @@ public class Project extends AbstractEntityObject {
     // *******************************************************
     // * Relationships
     // *******************************************************
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
     private Set<Module> modules;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CUSTOMER_ID", nullable = false)
     protected Customer customer;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CURRENCY_ID", nullable = false)
     protected Currency currency;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "PRP_PROJECT_MEMBER", joinColumns = { @JoinColumn(name = "PROJECT_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "MEMBER_USER_ID", referencedColumnName = "ID") })
     private Set<User> members;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "PRP_PROJECT_ADMIN", joinColumns = { @JoinColumn(name = "PROJECT_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ID") })
     private Set<User> adminUsers;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "PRP_PROJECT_PRJMGR", joinColumns = { @JoinColumn(name = "PROJECT_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "PRJMGR_USER_ID", referencedColumnName = "ID") })
     private Set<User> pmUsers;
 
@@ -258,7 +262,8 @@ public class Project extends AbstractEntityObject {
     /**
      * @return the currency
      */
-    @XmlElement(name = "currency")
+    @XmlTransient
+    @JsonIgnore
     public Currency getCurrency() {
         return this.currency;
     }
@@ -274,7 +279,8 @@ public class Project extends AbstractEntityObject {
     /**
      * @return the adminUsers
      */
-    @XmlElement(name = "adminusers")
+    @XmlTransient
+    @JsonIgnore
     public Set<User> getAdminUsers() {
         return this.adminUsers;
     }
@@ -290,7 +296,8 @@ public class Project extends AbstractEntityObject {
     /**
      * @return the pmUsers
      */
-    @XmlElement(name = "pmusers")
+    @XmlTransient
+    @JsonIgnore
     public Set<User> getPmUsers() {
         return this.pmUsers;
     }
@@ -306,7 +313,8 @@ public class Project extends AbstractEntityObject {
     /**
      * @return the modules
      */
-    @XmlElement(name = "modules")
+    @XmlTransient
+    @JsonIgnore
     public Set<Module> getModules() {
         return this.modules;
     }
@@ -322,7 +330,8 @@ public class Project extends AbstractEntityObject {
     /**
      * @return the customer
      */
-    @XmlElement(name = "customer")
+    @XmlTransient
+    @JsonIgnore
     public Customer getCustomer() {
         return this.customer;
     }
@@ -338,7 +347,8 @@ public class Project extends AbstractEntityObject {
     /**
      * @return the users
      */
-    @XmlElement(name = "members")
+    @XmlTransient
+    @JsonIgnore
     public Set<User> getMembers() {
         return this.members;
     }
@@ -363,9 +373,7 @@ public class Project extends AbstractEntityObject {
     @Override
     public String toString() {
         return "Project [name=" + this.name + ", description=" + this.description + ", status=" + this.status + ", startDate=" + this.startDate + ", endDate=" + this.endDate + ", budget="
-                + this.budget + ", account=" + this.account + ", stdRatePerHour=" + this.stdRatePerHour + ", stdHoursPerDay=" + this.stdHoursPerDay + ", modules=" + this.modules + ", customer="
-                + this.customer + ", currency=" + this.currency + ", members=" + this.members + ", adminUsers=" + this.adminUsers + ", pmUsers=" + this.pmUsers + ", toString()=" + super.toString()
-                + "]";
+                + this.budget + ", account=" + this.account + ", stdRatePerHour=" + this.stdRatePerHour + ", stdHoursPerDay=" + this.stdHoursPerDay + ", toString()=" + super.toString() + "]";
     }
 
     /*
@@ -378,16 +386,10 @@ public class Project extends AbstractEntityObject {
         final int prime = 31;
         int result = super.hashCode();
         result = prime * result + ((this.account == null) ? 0 : this.account.hashCode());
-        result = prime * result + ((this.adminUsers == null) ? 0 : this.adminUsers.hashCode());
         result = prime * result + this.budget;
-        result = prime * result + ((this.currency == null) ? 0 : this.currency.hashCode());
-        result = prime * result + ((this.customer == null) ? 0 : this.customer.hashCode());
         result = prime * result + ((this.description == null) ? 0 : this.description.hashCode());
         result = prime * result + ((this.endDate == null) ? 0 : this.endDate.hashCode());
-        result = prime * result + ((this.members == null) ? 0 : this.members.hashCode());
-        result = prime * result + ((this.modules == null) ? 0 : this.modules.hashCode());
         result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
-        result = prime * result + ((this.pmUsers == null) ? 0 : this.pmUsers.hashCode());
         result = prime * result + ((this.startDate == null) ? 0 : this.startDate.hashCode());
         result = prime * result + this.status;
         result = prime * result + this.stdHoursPerDay;
@@ -414,22 +416,7 @@ public class Project extends AbstractEntityObject {
                 return false;
         } else if (!this.account.equals(other.account))
             return false;
-        if (this.adminUsers == null) {
-            if (other.adminUsers != null)
-                return false;
-        } else if (!this.adminUsers.equals(other.adminUsers))
-            return false;
         if (this.budget != other.budget)
-            return false;
-        if (this.currency == null) {
-            if (other.currency != null)
-                return false;
-        } else if (!this.currency.equals(other.currency))
-            return false;
-        if (this.customer == null) {
-            if (other.customer != null)
-                return false;
-        } else if (!this.customer.equals(other.customer))
             return false;
         if (this.description == null) {
             if (other.description != null)
@@ -441,25 +428,10 @@ public class Project extends AbstractEntityObject {
                 return false;
         } else if (!this.endDate.equals(other.endDate))
             return false;
-        if (this.members == null) {
-            if (other.members != null)
-                return false;
-        } else if (!this.members.equals(other.members))
-            return false;
-        if (this.modules == null) {
-            if (other.modules != null)
-                return false;
-        } else if (!this.modules.equals(other.modules))
-            return false;
         if (this.name == null) {
             if (other.name != null)
                 return false;
         } else if (!this.name.equals(other.name))
-            return false;
-        if (this.pmUsers == null) {
-            if (other.pmUsers != null)
-                return false;
-        } else if (!this.pmUsers.equals(other.pmUsers))
             return false;
         if (this.startDate == null) {
             if (other.startDate != null)

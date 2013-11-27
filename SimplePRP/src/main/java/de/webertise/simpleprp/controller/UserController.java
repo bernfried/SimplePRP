@@ -1,5 +1,6 @@
 package de.webertise.simpleprp.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -19,8 +20,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import de.webertise.simpleprp.helper.xml.JaxbList;
+import de.webertise.simpleprp.model.Module;
 import de.webertise.simpleprp.model.Role;
 import de.webertise.simpleprp.model.User;
+import de.webertise.simpleprp.service.ClientService;
+import de.webertise.simpleprp.service.ModuleService;
+import de.webertise.simpleprp.service.ResourceReservationService;
+import de.webertise.simpleprp.service.ResourceRoleService;
 import de.webertise.simpleprp.service.RoleService;
 import de.webertise.simpleprp.service.UserService;
 
@@ -39,6 +45,18 @@ public class UserController {
     @Autowired
     private RoleService roleService;
 
+    @Autowired
+    private ClientService clientService;
+
+    @Autowired
+    private ModuleService moduleService;
+
+    @Autowired
+    private ResourceRoleService resourceRoleService;
+
+    @Autowired
+    private ResourceReservationService resourceReservationService;
+
     /**
      * Get a user by ID
      * 
@@ -49,7 +67,7 @@ public class UserController {
     @RequestMapping(value = "/{userId}", method = RequestMethod.GET, produces = { "application/json", "application/xml" })
     @ResponseBody
     public ResponseEntity<User> getUserById(@PathVariable Long userId) {
-        logger.info("UserController - getById: getUserById = '" + userId + "'");
+        logger.info("UserController - getUserById: userId = '" + userId + "'");
 
         // get the user by id
         User user = userService.get(userId);
@@ -71,7 +89,7 @@ public class UserController {
     @RequestMapping(method = RequestMethod.GET, produces = { "application/json", "application/xml" })
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody
-    ResponseEntity<JaxbList<User>> getAllUsers() {
+    ResponseEntity<JaxbList<User>> getUsers() {
         logger.info("UserController - getAllUsers: reached");
 
         // get the user by id
@@ -185,16 +203,19 @@ public class UserController {
     }
 
     /**
-     * 
+     * Adds an existing role to an existing user.
      * 
      * @param userId
+     *            Id of the user
      * @param roleId
+     *            Id of the role
      * @param builder
-     * @return
+     *            Uri Components Builder
+     * @return User Object with updated list of roles.
      */
     @RequestMapping(value = "/{userId}/roles/{roleId}", method = RequestMethod.POST, produces = { "application/json", "application/xml" })
     public ResponseEntity<User> addRoleToUser(@PathVariable Long userId, @PathVariable Long roleId, UriComponentsBuilder builder) {
-        logger.info("UserController - addRoleToUser: reached");
+        logger.info("UserController - addRoleToUser: reached with userId '" + userId + " / roleId '" + roleId + "'");
 
         // check if an user with id exists
         User updatedUser = null;
@@ -210,17 +231,28 @@ public class UserController {
                 roles.add(role);
                 existsUser.setAuthorities(roles);
                 updatedUser = userService.save(existsUser);
+
+                // set http header (location)
+                HttpHeaders headers = new HttpHeaders();
+                headers.setLocation(builder.path("/users/{id}").buildAndExpand(updatedUser.getId()).toUri());
+
+                // return new user
+                return new ResponseEntity<User>(updatedUser, headers, HttpStatus.CREATED);
             }
         }
-
-        // set http header (location)
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(builder.path("/users/{id}").buildAndExpand(updatedUser.getId()).toUri());
-
-        // return new user
-        return new ResponseEntity<User>(existsUser, headers, HttpStatus.CREATED);
     }
 
+    /**
+     * Removes an existing role by id from an existing user by id.
+     * 
+     * @param userId
+     *            Id of the user
+     * @param roleId
+     *            Id of the role to be removed.
+     * @param builder
+     *            Uri Component Builder
+     * @return User with updated list of roles
+     */
     @RequestMapping(value = "/{userId}/roles/{roleId}", method = RequestMethod.DELETE, produces = { "application/json", "application/xml" })
     public ResponseEntity<User> removeRoleFromUser(@PathVariable Long userId, @PathVariable Long roleId, UriComponentsBuilder builder) {
         logger.info("UserController - removeRoleFromUser: reached");
@@ -239,15 +271,149 @@ public class UserController {
                 roles.remove(role);
                 existsUser.setAuthorities(roles);
                 updatedUser = userService.save(existsUser);
+
+                // set http header (location)
+                HttpHeaders headers = new HttpHeaders();
+                headers.setLocation(builder.path("/users/{id}").buildAndExpand(updatedUser.getId()).toUri());
+
+                // return new user
+                return new ResponseEntity<User>(updatedUser, headers, HttpStatus.CREATED);
             }
         }
+    }
 
-        // set http header (location)
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(builder.path("/users/{id}").buildAndExpand(updatedUser.getId()).toUri());
+    /**
+     * Get all roles of an user by userId
+     * 
+     * @param userId
+     *            Id of the user
+     * @return List of roles.
+     */
+    @RequestMapping(value = "/{userId}/roles", method = RequestMethod.GET, produces = { "application/json", "application/xml" })
+    public ResponseEntity<JaxbList<Role>> getRolesByUserId(@PathVariable Long userId) {
+        logger.info("UserController - getRolesByUserId: reached with userId: '" + userId + "'");
 
-        // return new user
-        return new ResponseEntity<User>(existsUser, headers, HttpStatus.CREATED);
+        // check if an user with id exists
+        User existsUser = userService.get(userId);
+        if (existsUser == null) {
+            return new ResponseEntity<JaxbList<Role>>(HttpStatus.NOT_FOUND);
+        } else {
+            Set<Role> roles = existsUser.getAuthorities();
+            List<Role> roleList = new ArrayList<Role>();
+            for (Role role : roles) {
+                roleList.add(role);
+            }
+            JaxbList<Role> jaxbList = new JaxbList<Role>(roleList);
+            // return list of roles
+            return new ResponseEntity<JaxbList<Role>>(jaxbList, HttpStatus.OK);
+        }
+    }
+
+    /**
+     * Adds an existing module to an existing user.
+     * 
+     * @param userId
+     *            Id of the user
+     * @param moduleId
+     *            Id of the module
+     * @param builder
+     *            Uri Components Builder
+     * @return User Object with updated list of modules.
+     */
+    @RequestMapping(value = "/{userId}/modules/{moduleId}", method = RequestMethod.POST, produces = { "application/json", "application/xml" })
+    public ResponseEntity<User> addModuleToUser(@PathVariable Long userId, @PathVariable Long moduleId, UriComponentsBuilder builder) {
+        logger.info("UserController - addModuleToUser: reached with userId '" + userId + "' / moduleId '" + moduleId + "'");
+
+        // check if an user with id exists
+        User updatedUser = null;
+        User existsUser = userService.get(userId);
+        if (existsUser == null) {
+            return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+        } else {
+            Set<Module> modules = existsUser.getModules();
+            Module module = moduleService.get(moduleId);
+            if (module == null) {
+                return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+            } else {
+                modules.add(module);
+                existsUser.setModules(modules);
+                updatedUser = userService.save(existsUser);
+
+                // set http header (location)
+                HttpHeaders headers = new HttpHeaders();
+                headers.setLocation(builder.path("/users/{id}").buildAndExpand(updatedUser.getId()).toUri());
+
+                // return new user
+                return new ResponseEntity<User>(updatedUser, headers, HttpStatus.CREATED);
+            }
+        }
+    }
+
+    /**
+     * Removes an existing module by id from an existing user by id.
+     * 
+     * @param userId
+     *            Id of the user
+     * @param moduleId
+     *            Id of the module to be removed.
+     * @param builder
+     *            Uri Component Builder
+     * @return User with updated list of modules
+     */
+    @RequestMapping(value = "/{userId}/modules/{moduleId}", method = RequestMethod.DELETE, produces = { "application/json", "application/xml" })
+    public ResponseEntity<User> removeModuleFromUser(@PathVariable Long userId, @PathVariable Long moduleId, UriComponentsBuilder builder) {
+        logger.info("UserController - removeModuleFromUser: reached with userId '" + userId + "' / moduleId '" + moduleId + "'");
+
+        // check if an user with id exists
+        User updatedUser = null;
+        User existsUser = userService.get(userId);
+        if (existsUser == null) {
+            return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+        } else {
+            Set<Module> modules = existsUser.getModules();
+            Module module = moduleService.get(moduleId);
+            if (module == null) {
+                return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+            } else {
+                modules.remove(module);
+                existsUser.setModules(modules);
+                updatedUser = userService.save(existsUser);
+
+                // set http header (location)
+                HttpHeaders headers = new HttpHeaders();
+                headers.setLocation(builder.path("/users/{id}").buildAndExpand(updatedUser.getId()).toUri());
+
+                // return new user
+                return new ResponseEntity<User>(updatedUser, headers, HttpStatus.CREATED);
+            }
+        }
+    }
+
+    /**
+     * Get all modules of an user by userId
+     * 
+     * @param userId
+     *            Id of the user
+     * @return List of modules.
+     */
+    @RequestMapping(value = "/{userId}/modules", method = RequestMethod.GET, produces = { "application/json", "application/xml" })
+    public ResponseEntity<JaxbList<Module>> getModulesByUserId(@PathVariable Long userId) {
+        logger.info("UserController - getModulesByUserId: reached with userId: '" + userId + "'");
+
+        // check if an user with id exists
+        User existsUser = userService.get(userId);
+        if (existsUser == null) {
+            return new ResponseEntity<JaxbList<Module>>(HttpStatus.NOT_FOUND);
+        } else {
+            Set<Module> modules = existsUser.getModules();
+            List<Module> moduleList = new ArrayList<Module>();
+            for (Module module : modules) {
+                moduleList.add(module);
+            }
+            JaxbList<Module> jaxbList = new JaxbList<Module>(moduleList);
+            // return list of modules
+            return new ResponseEntity<JaxbList<Module>>(jaxbList, HttpStatus.OK);
+        }
     }
 
 }

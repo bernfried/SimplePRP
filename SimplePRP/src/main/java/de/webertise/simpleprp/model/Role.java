@@ -1,11 +1,20 @@
 package de.webertise.simpleprp.model;
 
+import java.util.Set;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import de.webertise.simpleprp.model.general.AbstractEntityObject;
 
@@ -29,6 +38,10 @@ public class Role extends AbstractEntityObject {
     // *******************************************************
     // * Relationships
     // *******************************************************
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "PRP_USER_ROLE", joinColumns = { @JoinColumn(name = "ROLE_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "USER_ID", referencedColumnName = "ID") })
+    private Set<User> users;
 
     // *************************************************************************
     // * Constructors
@@ -75,6 +88,23 @@ public class Role extends AbstractEntityObject {
      */
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    /**
+     * @return the users
+     */
+    @XmlTransient
+    @JsonIgnore
+    public Set<User> getUsers() {
+        return this.users;
+    }
+
+    /**
+     * @param users
+     *            the users to set
+     */
+    public void setUsers(Set<User> users) {
+        this.users = users;
     }
 
     // *************************************************************************

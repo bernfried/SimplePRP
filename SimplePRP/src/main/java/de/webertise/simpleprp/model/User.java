@@ -101,7 +101,6 @@ public class User extends AbstractEntityObject {
     // * Transient fields
     // *******************************************************
     @Transient
-    @XmlTransient
     private String plainPassword;
 
     // *******************************************************
@@ -472,9 +471,7 @@ public class User extends AbstractEntityObject {
         result = prime * result + ((this.firstName == null) ? 0 : this.firstName.hashCode());
         result = prime * result + ((this.lastName == null) ? 0 : this.lastName.hashCode());
         result = prime * result + ((this.login == null) ? 0 : this.login.hashCode());
-        result = prime * result + ((this.password == null) ? 0 : this.password.hashCode());
-        result = prime * result + ((this.plainPassword == null) ? 0 : this.plainPassword.hashCode());
-        result = prime * result + ((this.salt == null) ? 0 : this.salt.hashCode());
+        result = prime * result + ((this.resourceRoles == null) ? 0 : this.resourceRoles.hashCode());
         return result;
     }
 
@@ -495,16 +492,6 @@ public class User extends AbstractEntityObject {
         if (this.accountNonExpired != other.accountNonExpired)
             return false;
         if (this.accountNonLocked != other.accountNonLocked)
-            return false;
-        if (this.authorities == null) {
-            if (other.authorities != null)
-                return false;
-        } else if (!this.authorities.equals(other.authorities))
-            return false;
-        if (this.clients == null) {
-            if (other.clients != null)
-                return false;
-        } else if (!this.clients.equals(other.clients))
             return false;
         if (this.credentialsNonExpired != other.credentialsNonExpired)
             return false;
@@ -532,50 +519,10 @@ public class User extends AbstractEntityObject {
                 return false;
         } else if (!this.login.equals(other.login))
             return false;
-        if (this.modules == null) {
-            if (other.modules != null)
-                return false;
-        } else if (!this.modules.equals(other.modules))
-            return false;
-        if (this.password == null) {
-            if (other.password != null)
-                return false;
-        } else if (!this.password.equals(other.password))
-            return false;
-        if (this.plainPassword == null) {
-            if (other.plainPassword != null)
-                return false;
-        } else if (!this.plainPassword.equals(other.plainPassword))
-            return false;
-        if (this.projectsAsAdmin == null) {
-            if (other.projectsAsAdmin != null)
-                return false;
-        } else if (!this.projectsAsAdmin.equals(other.projectsAsAdmin))
-            return false;
-        if (this.projectsAsMember == null) {
-            if (other.projectsAsMember != null)
-                return false;
-        } else if (!this.projectsAsMember.equals(other.projectsAsMember))
-            return false;
-        if (this.projectsAsPrjMgr == null) {
-            if (other.projectsAsPrjMgr != null)
-                return false;
-        } else if (!this.projectsAsPrjMgr.equals(other.projectsAsPrjMgr))
-            return false;
-        if (this.resourceReservations == null) {
-            if (other.resourceReservations != null)
-                return false;
-        } else if (!this.resourceReservations.equals(other.resourceReservations))
-            return false;
         if (this.resourceRoles == null) {
             if (other.resourceRoles != null)
                 return false;
         } else if (!this.resourceRoles.equals(other.resourceRoles))
-            return false;
-        if (this.salt == null) {
-            if (other.salt != null)
-                return false;
-        } else if (!this.salt.equals(other.salt))
             return false;
         return true;
     }
@@ -587,11 +534,9 @@ public class User extends AbstractEntityObject {
      */
     @Override
     public String toString() {
-        return "User [login=" + this.login + ", password=" + this.password + ", firstName=" + this.firstName + ", lastName=" + this.lastName + ", email=" + this.email + ", failedLoginAttempts="
-                + this.failedLoginAttempts + ", accountNonExpired=" + this.accountNonExpired + ", accountNonLocked=" + this.accountNonLocked + ", credentialsNonExpired=" + this.credentialsNonExpired
-                + ", enabled=" + this.enabled + ", salt=" + this.salt + ", authorities=" + this.authorities + ", clients=" + this.clients + ", modules=" + this.modules + ", projectsAsMember="
-                + this.projectsAsMember + ", projectsAsPrjMgr=" + this.projectsAsPrjMgr + ", projectsAsAdmin=" + this.projectsAsAdmin + ", resourceRoles=" + this.resourceRoles
-                + ", resourceReservations=" + this.resourceReservations + ", plainPassword=" + this.plainPassword + "]";
+        return "User [login=" + this.login + ", firstName=" + this.firstName + ", lastName=" + this.lastName + ", email=" + this.email + ", failedLoginAttempts=" + this.failedLoginAttempts
+                + ", accountNonExpired=" + this.accountNonExpired + ", accountNonLocked=" + this.accountNonLocked + ", credentialsNonExpired=" + this.credentialsNonExpired + ", enabled="
+                + this.enabled + ", toString()=" + super.toString() + "]";
     }
 
 }

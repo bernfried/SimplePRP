@@ -5,11 +5,15 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import de.webertise.simpleprp.model.general.AbstractEntityObject;
 
@@ -54,15 +58,15 @@ public class ResourceReservation extends AbstractEntityObject {
     // * Relationships
     // *******************************************************
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "RESOURCEROLE_ID")
     protected ResourceRole resourceRole;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
     protected User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MODULE_ID", nullable = false)
     protected Module module;
 
@@ -164,7 +168,8 @@ public class ResourceReservation extends AbstractEntityObject {
     /**
      * @return the resourceRole
      */
-    @XmlElement(name = "resourcerole")
+    @XmlTransient
+    @JsonIgnore
     public ResourceRole getResourceRole() {
         return this.resourceRole;
     }
@@ -180,7 +185,8 @@ public class ResourceReservation extends AbstractEntityObject {
     /**
      * @return the user
      */
-    @XmlElement(name = "user")
+    @XmlTransient
+    @JsonIgnore
     public User getUser() {
         return this.user;
     }
@@ -196,7 +202,8 @@ public class ResourceReservation extends AbstractEntityObject {
     /**
      * @return the module
      */
-    @XmlElement(name = "module")
+    @XmlTransient
+    @JsonIgnore
     public Module getModule() {
         return this.module;
     }
@@ -221,7 +228,7 @@ public class ResourceReservation extends AbstractEntityObject {
     @Override
     public String toString() {
         return "ResourceReservation [name=" + this.name + ", status=" + this.status + ", day=" + this.day + ", calYearWeek=" + this.calYearWeek + ", reservedRatio=" + this.reservedRatio
-                + ", resourceRole=" + this.resourceRole + ", user=" + this.user + ", module=" + this.module + ", toString()=" + super.toString() + "]";
+                + ", toString()=" + super.toString() + "]";
     }
 
     /*
@@ -235,12 +242,9 @@ public class ResourceReservation extends AbstractEntityObject {
         int result = super.hashCode();
         result = prime * result + ((this.calYearWeek == null) ? 0 : this.calYearWeek.hashCode());
         result = prime * result + ((this.day == null) ? 0 : this.day.hashCode());
-        result = prime * result + ((this.module == null) ? 0 : this.module.hashCode());
         result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
         result = prime * result + Float.floatToIntBits(this.reservedRatio);
-        result = prime * result + ((this.resourceRole == null) ? 0 : this.resourceRole.hashCode());
         result = prime * result + this.status;
-        result = prime * result + ((this.user == null) ? 0 : this.user.hashCode());
         return result;
     }
 
@@ -268,11 +272,6 @@ public class ResourceReservation extends AbstractEntityObject {
                 return false;
         } else if (!this.day.equals(other.day))
             return false;
-        if (this.module == null) {
-            if (other.module != null)
-                return false;
-        } else if (!this.module.equals(other.module))
-            return false;
         if (this.name == null) {
             if (other.name != null)
                 return false;
@@ -280,17 +279,7 @@ public class ResourceReservation extends AbstractEntityObject {
             return false;
         if (Float.floatToIntBits(this.reservedRatio) != Float.floatToIntBits(other.reservedRatio))
             return false;
-        if (this.resourceRole == null) {
-            if (other.resourceRole != null)
-                return false;
-        } else if (!this.resourceRole.equals(other.resourceRole))
-            return false;
         if (this.status != other.status)
-            return false;
-        if (this.user == null) {
-            if (other.user != null)
-                return false;
-        } else if (!this.user.equals(other.user))
             return false;
         return true;
     }

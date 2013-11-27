@@ -5,12 +5,16 @@ import java.util.Set;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import de.webertise.simpleprp.model.general.AbstractEntityObject;
 
@@ -31,7 +35,7 @@ public class Client extends AbstractEntityObject {
     // * Relationships
     // *******************************************************
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "PRP_USER_CLIENT", joinColumns = { @JoinColumn(name = "CLIENT_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "USER_ID", referencedColumnName = "ID") })
     private Set<User> users;
 
@@ -69,7 +73,8 @@ public class Client extends AbstractEntityObject {
     /**
      * @return the users
      */
-    @XmlElement(name = "users")
+    @XmlTransient
+    @JsonIgnore
     public Set<User> getUsers() {
         return this.users;
     }
@@ -93,7 +98,7 @@ public class Client extends AbstractEntityObject {
      */
     @Override
     public String toString() {
-        return "Client [name=" + name + ", toString()=" + super.toString() + "]";
+        return "Client [name=" + this.name + ", toString()=" + super.toString() + "]";
     }
 
     /*
@@ -105,7 +110,7 @@ public class Client extends AbstractEntityObject {
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
         return result;
     }
 
@@ -123,10 +128,10 @@ public class Client extends AbstractEntityObject {
         if (getClass() != obj.getClass())
             return false;
         Client other = (Client) obj;
-        if (name == null) {
+        if (this.name == null) {
             if (other.name != null)
                 return false;
-        } else if (!name.equals(other.name))
+        } else if (!this.name.equals(other.name))
             return false;
         return true;
     }

@@ -5,10 +5,14 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import de.webertise.simpleprp.model.general.AbstractEntityObject;
 
@@ -29,7 +33,7 @@ public class Customer extends AbstractEntityObject {
     // * Relationships
     // *******************************************************
 
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
     private List<Project> projects;
 
     // *************************************************************************
@@ -66,7 +70,8 @@ public class Customer extends AbstractEntityObject {
     /**
      * @return the projects
      */
-    @XmlElement(name = "projects")
+    @XmlTransient
+    @JsonIgnore
     public List<Project> getProjects() {
         return this.projects;
     }
@@ -90,7 +95,7 @@ public class Customer extends AbstractEntityObject {
      */
     @Override
     public String toString() {
-        return "Role [name=" + name + ", toString()=" + super.toString() + "]";
+        return "Customer [name=" + this.name + ", toString()=" + super.toString() + "]";
     }
 
     /*
@@ -102,7 +107,7 @@ public class Customer extends AbstractEntityObject {
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
         return result;
     }
 
@@ -120,10 +125,10 @@ public class Customer extends AbstractEntityObject {
         if (getClass() != obj.getClass())
             return false;
         Customer other = (Customer) obj;
-        if (name == null) {
+        if (this.name == null) {
             if (other.name != null)
                 return false;
-        } else if (!name.equals(other.name))
+        } else if (!this.name.equals(other.name))
             return false;
         return true;
     }

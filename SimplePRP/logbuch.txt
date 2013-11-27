@@ -209,53 +209,106 @@ Logbuch:
 * JSON als Rückgabeformat definieren
 ***************************************************
 
-	- Dependency für Jackson hinzufügen (Version 1.9.13)
+	- Dependency für Jackson und JAXB2 hinzufügen
 
 		<org.codehaus-jackson-version>1.9.13</org.codehaus-jackson-version>		
 		
+		<!-- JSON Support with Jackson -->
 		<dependency>
-		  <groupId> org.codehaus.jackson</groupId>
-		  <artifactId>jackson-mapper-asl</artifactId>
-		  <version>${org.codehaus-jackson-version}</version>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>2.2.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.2.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.9.13</version>
 		</dependency>
 
-	- Im UserController eine getById Methode einfügen mit "@ResponseBody User" als Return Objekt
+		<!-- XML support -->
+		<dependency>
+			<groupId>org.springframework.ws</groupId>
+			<artifactId>spring-oxm</artifactId>
+			<version>1.5.10</version>
+		</dependency>
+		<dependency>
+      		<groupId>org.springframework.ws</groupId>
+      		<artifactId>spring-oxm-tiger</artifactId>
+      		<version>1.5.10</version>
+    	</dependency>
+
+	- in der spring-general.xml folgende Blöcke definiert:
 	
-	- Folgende Resolver Konfiguration wurde ersetzt
+		a) den Content Negotiation Manager konfiguriert:
 	
-		<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
-		<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-			<beans:property name="prefix" value="/WEB-INF/views/" />
-			<beans:property name="suffix" value=".jsp" />
+	    <beans:bean id="ctntNegMgr" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+	 	    <beans:property name="favorPathExtension" value="false" />
+		    <beans:property name="favorParameter" value="false" />
+		    <beans:property name="parameterName" value="mediaType" />
+		    <beans:property name="ignoreAcceptHeader" value="false"/>
+		    <beans:property name="useJaf" value="false"/>
+		    <beans:property name="defaultContentType" value="application/json" />
+		    <beans:property name="mediaTypes">
+		        <beans:map>
+		            <beans:entry key="xml"><util:constant static-field="org.springframework.http.MediaType.APPLICATION_XML_VALUE"/></beans:entry>
+		            <beans:entry key="json"><util:constant static-field="org.springframework.http.MediaType.APPLICATION_JSON_VALUE"/></beans:entry>
+		       </beans:map>
+		    </beans:property>
+	  	</beans:bean>
+	  	
+		b) den jaxb2Marshaller (Teil von spring-oxm und ...-tiger) als bean deklariert
+	
+	 	<beans:bean id="jaxb2Marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+			<beans:property name="classesToBeBound">
+				<beans:list> 
+					<beans:value>de.webertise.simpleprp.model.User</beans:value>
+					<beans:value>de.webertise.simpleprp.model.Client</beans:value>
+					<beans:value>de.webertise.simpleprp.model.Currency</beans:value>
+					<beans:value>de.webertise.simpleprp.model.Customer</beans:value>
+					<beans:value>de.webertise.simpleprp.model.Module</beans:value>
+					<beans:value>de.webertise.simpleprp.model.Project</beans:value>
+					<beans:value>de.webertise.simpleprp.model.ResourceReservation</beans:value>
+					<beans:value>de.webertise.simpleprp.model.ResourceRole</beans:value>
+					<beans:value>de.webertise.simpleprp.model.Role</beans:value>
+					<beans:value>de.webertise.simpleprp.model.general.AbstractEntityObject</beans:value>
+				</beans:list>
+			</beans:property>
+			<beans:property name="marshallerProperties">
+				<beans:map>
+					<beans:entry>
+						<beans:key><util:constant static-field="javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT"/></beans:key>
+						<beans:value type="java.lang.Boolean">true</beans:value>
+					</beans:entry>
+				</beans:map>
+			</beans:property>
 		</beans:bean>
 	
-	  durch
-	  
-	  	<!-- Resolves incoming requests for the @Controller to based on the media type (html / json) -->
-		<beans:bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
-		  <beans:property name="mediaTypes">
-		    <beans:map>
-		      <beans:entry key="html" value="text/html"/>
-		      <beans:entry key="json" value="application/json"/>
-		    </beans:map>
-		  </beans:property>
-		  <beans:property name="viewResolvers">
-		    <beans:list>
-		      <beans:bean class="org.springframework.web.servlet.view.UrlBasedViewResolver">
-		        <beans:property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
-		        <beans:property name="prefix" value="/WEB-INF/jsp/"/>
-		        <beans:property name="suffix" value=".jsp"/>
-		      </beans:bean>
-		    </beans:list>
-		  </beans:property>
-		  <beans:property name="defaultViews">
-		    <beans:list>
-		      <beans:bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">
-		        <beans:property name="prefixJson" value="true"/>
-		      </beans:bean>
-		    </beans:list>
-		  </beans:property>
-		</beans:bean>
+		c) den Json und XML Message Converter registriert als default Message Converter: 
+		
+		<!-- assign message converters -->
+		<mvc:annotation-driven content-negotiation-manager="ctntNegMgr">
+			<mvc:message-converters register-defaults="true">
+				<beans:bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"/>
+				<beans:bean class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
+			  		<beans:property name="marshaller" ref="jaxb2Marshaller"></beans:property>
+			  		<beans:property name="unmarshaller" ref="jaxb2Marshaller"></beans:property>
+				</beans:bean>
+			</mvc:message-converters>
+		</mvc:annotation-driven>
+		
+	- Damit die Model Klassen korrekt als XML/JSON ausgegeben werden können, müssen
+		- @XmlRootElement und @XmlElement Annotations auf class und getter Ebene eingefügt werden.
+		- mit @XmlTransient (für XML) und @JsonIgnore (für JSON) werden an den Gettern die Eigenschaften ausgeschlossen, 
+		  die nicht in XML ausgegeben werden sollen.
+		- Die Erzeugung von XML und JSON führt anfänglich zu Problemen, die mit dem gegenseitigen Referenzieren 
+		  zwischen den Objekten zu tun hatten. Daher mussten die getter für relationships teilweise mit @XmlTransient versehen werden.
+		- Generell stellt sich noch die Frage, wie man verschiedene Tiefen von XML / JSON Strukturen auf Bedarf steuern möchte, wenn
+		  alle Konfigurationen diesbezgl. in der Entity Klasse stattfinden.
 
 ***************************************************
 * JUnit Tests einbauen (speziell für JSON)
@@ -300,10 +353,25 @@ Logbuch:
 	- Implementierung einer UserControllerText.java zum Test der entspr. Controller 
 	  Methoden.
 		
+	
+***************************************************
+* Hibernate Session
+***************************************************
 		
+	- Filter in web.xml hinzugefügt. Der stellt sicher, dass ein Entity Manager für die Dauer eines Requests am leben bleibt
+	  und somit für Lazy Zugriffe zur Verfügung steht.
 		
+		<filter>
+			<filter-name>OpenEntityManagerFilter</filter-name>
+			<filter-class>org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter</filter-class>
+		</filter>
+		<filter-mapping>
+			<filter-name>OpenEntityManagerFilter</filter-name>
+			<url-pattern>/*</url-pattern>
+		</filter-mapping>
 		
-		
+	- Inhalt von spring-database.xml nach root-context.xml verschoben, damit der Filter die 
+	  entityManagerFactory bean finden kann.	
 		
 		
 		
