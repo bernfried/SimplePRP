@@ -28,6 +28,13 @@ import de.webertise.simpleprp.model.general.AbstractEntityObject;
 public class User extends AbstractEntityObject {
 
     // *******************************************************
+    // * Constants
+    // *******************************************************
+    public final static String RELATION_TYPE_MEMBER = "member";
+    public final static String RELATION_TYPE_PRJMGR = "prjmgr";
+    public final static String RELATION_TYPE_ADMIN = "admin";
+
+    // *******************************************************
     // * Specific Entity Properties
     // *******************************************************
     @Column(name = "LOGIN", nullable = false, length = 20)
