@@ -43,6 +43,7 @@
 				<beans:value>de.webertise.simpleprp.model.ResourceRole</beans:value>
 				<beans:value>de.webertise.simpleprp.model.Role</beans:value>
 				<beans:value>de.webertise.simpleprp.model.general.AbstractEntityObject</beans:value>
+				<beans:value>de.webertise.simpleprp.exception.ExceptionResponse</beans:value>
 			</beans:list>
 		</beans:property>
 		<beans:property name="marshallerProperties">

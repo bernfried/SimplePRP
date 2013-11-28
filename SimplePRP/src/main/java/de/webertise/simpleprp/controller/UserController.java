@@ -1,5 +1,6 @@
 package de.webertise.simpleprp.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import de.webertise.simpleprp.exception.ObjectNotFoundException;
 import de.webertise.simpleprp.helper.xml.JaxbList;
 import de.webertise.simpleprp.model.Client;
 import de.webertise.simpleprp.model.Module;
@@ -775,15 +777,16 @@ public class UserController {
      *            Type of the user/project relationship. Can be member, prjmgr
      *            or admin.
      * @return List of resourceRoles.
+     * @throws IOException
      */
     @RequestMapping(value = "/{userId}/projects/{relType}", method = RequestMethod.GET, produces = { "application/json", "application/xml" })
-    public ResponseEntity<JaxbList<Project>> getProjectsByUserIdAndRelationType(@PathVariable Long userId, @PathVariable String relType) {
+    public ResponseEntity<JaxbList<Project>> getProjectsByUserIdAndRelationType(@PathVariable Long userId, @PathVariable String relType) throws Exception {
         logger.info("UserController - getProjectsByUserIdAndRelationType: reached with userId: '" + userId + "' / relType '" + relType + "'");
 
         // check if an user with id exists
         User existsUser = userService.get(userId);
         if (existsUser == null) {
-            return new ResponseEntity<JaxbList<Project>>(HttpStatus.NOT_FOUND);
+            throw new ObjectNotFoundException("User with id '" + userId + "' not found.");
         } else {
             Set<Project> projects = null;
             if (relType.equals(User.RELATION_TYPE_ADMIN)) {
@@ -793,7 +796,7 @@ public class UserController {
             } else if (relType.equals(User.RELATION_TYPE_MEMBER)) {
                 projects = existsUser.getProjectsAsMember();
             } else {
-                return new ResponseEntity<JaxbList<Project>>(HttpStatus.BAD_REQUEST);
+                throw new ObjectNotFoundException("Relationship Type '" + relType + "' wrong. Allowed values are member, prjmgr, admin.");
             }
             List<Project> projectList = new ArrayList<Project>();
             for (Project project : projects) {
