@@ -16,7 +16,4 @@
 	<!-- Language -->
     <beans:import resource="classpath:spring/spring-language.xml" />
     
-    <!-- Database & Transaction -->
-    <beans:import resource="classpath:spring/spring-database.xml" />
-	
 </beans:beans>

@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import de.webertise.simpleprp.exception.ObjectDeletionFailedException;
+import de.webertise.simpleprp.exception.ObjectExistsAlreadyException;
 import de.webertise.simpleprp.exception.ObjectNotFoundException;
 import de.webertise.simpleprp.helper.xml.JaxbList;
 import de.webertise.simpleprp.model.Client;
@@ -73,10 +75,11 @@ public class UserController {
      * @param userId
      *            Id of the user
      * @return User
+     * @throws Exception
      */
     @RequestMapping(value = "/{userId}", method = RequestMethod.GET, produces = { "application/json", "application/xml" })
     @ResponseBody
-    public ResponseEntity<User> getUserById(@PathVariable Long userId) {
+    public ResponseEntity<User> getUserById(@PathVariable Long userId) throws Exception {
         logger.info("UserController - getUserById: userId = '" + userId + "'");
 
         // get the user by id
@@ -84,7 +87,7 @@ public class UserController {
 
         // return http status 404 (not found)
         if (user == null) {
-            return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+            throw new ObjectNotFoundException("User with id '" + userId + "' not found.");
         }
 
         // return the user found
@@ -117,14 +120,15 @@ public class UserController {
      * @param userId
      *            Id of the user to be deleted
      * @return Response with correct http status code
+     * @throws Exception
      */
     @RequestMapping(value = "/{userId}", method = RequestMethod.DELETE, produces = { "application/json", "application/xml" })
-    public ResponseEntity<User> deleteUserById(@PathVariable Long userId) {
+    public ResponseEntity<User> deleteUserById(@PathVariable Long userId) throws Exception {
         logger.info("UserController - delete: deleteUserById = '" + userId + "'");
 
         // check if id exists
         if (userId != null && !userService.exists(userId)) {
-            return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+            throw new ObjectNotFoundException("User with id '" + userId + "' not found.");
         }
 
         // get user object
@@ -134,8 +138,8 @@ public class UserController {
         userService.remove(userId);
 
         // check if delete was successful
-        if (userService.exists(userId)) {
-            return new ResponseEntity<User>(deletedUser, HttpStatus.FORBIDDEN);
+        if (!userService.exists(userId)) {
+            throw new ObjectDeletionFailedException("User with id '" + userId + "' could not be deleted.", deletedUser);
         }
 
         return new ResponseEntity<User>(deletedUser, HttpStatus.OK);
@@ -149,19 +153,20 @@ public class UserController {
      * @param builder
      *            Uri builder
      * @return Newly created user
+     * @throws Exception
      */
     @RequestMapping(method = RequestMethod.POST, produces = { "application/json", "application/xml" })
-    public ResponseEntity<User> createUser(@RequestBody User user, UriComponentsBuilder builder) {
+    public ResponseEntity<User> createUser(@RequestBody User user, UriComponentsBuilder builder) throws Exception {
         logger.info("UserController - createUser: reached");
 
         // check if an user with that email and login name already exists
         User existsUser = userService.getByEmail(user.getEmail());
         if (existsUser != null) {
-            return new ResponseEntity<User>(HttpStatus.FORBIDDEN);
+            throw new ObjectExistsAlreadyException("User with email '" + user.getEmail() + "' exists already.");
         } else {
             existsUser = userService.getByLogin(user.getLogin());
             if (existsUser != null) {
-                return new ResponseEntity<User>(HttpStatus.FORBIDDEN);
+                throw new ObjectExistsAlreadyException("User with login '" + user.getLogin() + "' exists already.");
             }
         }
 
@@ -185,15 +190,16 @@ public class UserController {
      *            UriComponentBuilder for building the location url of the
      *            response header.
      * @return Return the updated user object
+     * @throws Exception
      */
     @RequestMapping(method = RequestMethod.PUT, produces = { "application/json", "application/xml" })
-    public ResponseEntity<User> updateUser(@RequestBody User user, UriComponentsBuilder builder) {
+    public ResponseEntity<User> updateUser(@RequestBody User user, UriComponentsBuilder builder) throws Exception {
         logger.info("UserController - updateUser: reached");
 
         // check if an user with that email and login name already exists
         User existsUser = userService.getByEmail(user.getEmail());
         if (existsUser == null) {
-            return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+            throw new ObjectNotFoundException("User with email '" + user.getEmail() + "' not found.");
         }
 
         // Update all changeable user properties
@@ -222,21 +228,22 @@ public class UserController {
      * @param builder
      *            Uri Components Builder
      * @return User Object with updated list of roles.
+     * @throws Exception
      */
     @RequestMapping(value = "/{userId}/roles/{roleId}", method = RequestMethod.POST, produces = { "application/json", "application/xml" })
-    public ResponseEntity<User> addRoleToUser(@PathVariable Long userId, @PathVariable Long roleId, UriComponentsBuilder builder) {
+    public ResponseEntity<User> addRoleToUser(@PathVariable Long userId, @PathVariable Long roleId, UriComponentsBuilder builder) throws Exception {
         logger.info("UserController - addRoleToUser: reached with userId '" + userId + " / roleId '" + roleId + "'");
 
         // check if an user with id exists
         User updatedUser = null;
         User existsUser = userService.get(userId);
         if (existsUser == null) {
-            return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+            throw new ObjectNotFoundException("User with id '" + userId + "' not found.");
         } else {
             Set<Role> roles = existsUser.getAuthorities();
             Role role = roleService.get(roleId);
             if (role == null) {
-                return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+                throw new ObjectNotFoundException("Role with id '" + roleId + "' not found.");
             } else {
                 roles.add(role);
                 existsUser.setAuthorities(roles);
@@ -262,21 +269,22 @@ public class UserController {
      * @param builder
      *            Uri Component Builder
      * @return User with updated list of roles
+     * @throws Exception
      */
     @RequestMapping(value = "/{userId}/roles/{roleId}", method = RequestMethod.DELETE, produces = { "application/json", "application/xml" })
-    public ResponseEntity<User> removeRoleFromUser(@PathVariable Long userId, @PathVariable Long roleId, UriComponentsBuilder builder) {
+    public ResponseEntity<User> removeRoleFromUser(@PathVariable Long userId, @PathVariable Long roleId, UriComponentsBuilder builder) throws Exception {
         logger.info("UserController - removeRoleFromUser: reached");
 
         // check if an user with id exists
         User updatedUser = null;
         User existsUser = userService.get(userId);
         if (existsUser == null) {
-            return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+            throw new ObjectNotFoundException("User with id '" + userId + "' not found.");
         } else {
             Set<Role> roles = existsUser.getAuthorities();
             Role role = roleService.get(roleId);
             if (role == null) {
-                return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+                throw new ObjectNotFoundException("Role with id '" + roleId + "' not found.");
             } else {
                 roles.remove(role);
                 existsUser.setAuthorities(roles);
@@ -298,15 +306,16 @@ public class UserController {
      * @param userId
      *            Id of the user
      * @return List of roles.
+     * @throws Exception
      */
     @RequestMapping(value = "/{userId}/roles", method = RequestMethod.GET, produces = { "application/json", "application/xml" })
-    public ResponseEntity<JaxbList<Role>> getRolesByUserId(@PathVariable Long userId) {
+    public ResponseEntity<JaxbList<Role>> getRolesByUserId(@PathVariable Long userId) throws Exception {
         logger.info("UserController - getRolesByUserId: reached with userId: '" + userId + "'");
 
         // check if an user with id exists
         User existsUser = userService.get(userId);
         if (existsUser == null) {
-            return new ResponseEntity<JaxbList<Role>>(HttpStatus.NOT_FOUND);
+            throw new ObjectNotFoundException("User with id '" + userId + "' not found.");
         } else {
             Set<Role> roles = existsUser.getAuthorities();
             List<Role> roleList = new ArrayList<Role>();
@@ -329,21 +338,22 @@ public class UserController {
      * @param builder
      *            Uri Components Builder
      * @return User Object with updated list of modules.
+     * @throws Exception
      */
     @RequestMapping(value = "/{userId}/modules/{moduleId}", method = RequestMethod.POST, produces = { "application/json", "application/xml" })
-    public ResponseEntity<User> addModuleToUser(@PathVariable Long userId, @PathVariable Long moduleId, UriComponentsBuilder builder) {
+    public ResponseEntity<User> addModuleToUser(@PathVariable Long userId, @PathVariable Long moduleId, UriComponentsBuilder builder) throws Exception {
         logger.info("UserController - addModuleToUser: reached with userId '" + userId + "' / moduleId '" + moduleId + "'");
 
         // check if an user with id exists
         User updatedUser = null;
         User existsUser = userService.get(userId);
         if (existsUser == null) {
-            return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+            throw new ObjectNotFoundException("User with id '" + userId + "' not found.");
         } else {
             Set<Module> modules = existsUser.getModules();
             Module module = moduleService.get(moduleId);
             if (module == null) {
-                return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+                throw new ObjectNotFoundException("Module with id '" + moduleId + "' not found.");
             } else {
                 modules.add(module);
                 existsUser.setModules(modules);
@@ -369,21 +379,22 @@ public class UserController {
      * @param builder
      *            Uri Component Builder
      * @return User with updated list of modules
+     * @throws Exception
      */
     @RequestMapping(value = "/{userId}/modules/{moduleId}", method = RequestMethod.DELETE, produces = { "application/json", "application/xml" })
-    public ResponseEntity<User> removeModuleFromUser(@PathVariable Long userId, @PathVariable Long moduleId, UriComponentsBuilder builder) {
+    public ResponseEntity<User> removeModuleFromUser(@PathVariable Long userId, @PathVariable Long moduleId, UriComponentsBuilder builder) throws Exception {
         logger.info("UserController - removeModuleFromUser: reached with userId '" + userId + "' / moduleId '" + moduleId + "'");
 
         // check if an user with id exists
         User updatedUser = null;
         User existsUser = userService.get(userId);
         if (existsUser == null) {
-            return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+            throw new ObjectNotFoundException("User with id '" + userId + "' not found.");
         } else {
             Set<Module> modules = existsUser.getModules();
             Module module = moduleService.get(moduleId);
             if (module == null) {
-                return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+                throw new ObjectNotFoundException("Module with id '" + moduleId + "' not found.");
             } else {
                 modules.remove(module);
                 existsUser.setModules(modules);
@@ -405,15 +416,16 @@ public class UserController {
      * @param userId
      *            Id of the user
      * @return List of modules.
+     * @throws Exception
      */
     @RequestMapping(value = "/{userId}/modules", method = RequestMethod.GET, produces = { "application/json", "application/xml" })
-    public ResponseEntity<JaxbList<Module>> getModulesByUserId(@PathVariable Long userId) {
+    public ResponseEntity<JaxbList<Module>> getModulesByUserId(@PathVariable Long userId) throws Exception {
         logger.info("UserController - getModulesByUserId: reached with userId: '" + userId + "'");
 
         // check if an user with id exists
         User existsUser = userService.get(userId);
         if (existsUser == null) {
-            return new ResponseEntity<JaxbList<Module>>(HttpStatus.NOT_FOUND);
+            throw new ObjectNotFoundException("User with id '" + userId + "' not found.");
         } else {
             Set<Module> modules = existsUser.getModules();
             List<Module> moduleList = new ArrayList<Module>();
@@ -436,21 +448,22 @@ public class UserController {
      * @param builder
      *            Uri Components Builder
      * @return User Object with updated list of clients.
+     * @throws Exception
      */
     @RequestMapping(value = "/{userId}/clients/{clientId}", method = RequestMethod.POST, produces = { "application/json", "application/xml" })
-    public ResponseEntity<User> addClientToUser(@PathVariable Long userId, @PathVariable Long clientId, UriComponentsBuilder builder) {
+    public ResponseEntity<User> addClientToUser(@PathVariable Long userId, @PathVariable Long clientId, UriComponentsBuilder builder) throws Exception {
         logger.info("UserController - addClientToUser: reached with userId '" + userId + "' / clientId '" + clientId + "'");
 
         // check if an user with id exists
         User updatedUser = null;
         User existsUser = userService.get(userId);
         if (existsUser == null) {
-            return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+            throw new ObjectNotFoundException("User with id '" + userId + "' not found.");
         } else {
             Set<Client> clients = existsUser.getClients();
             Client client = clientService.get(clientId);
             if (client == null) {
-                return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+                throw new ObjectNotFoundException("Client with id '" + clientId + "' not found.");
             } else {
                 clients.add(client);
                 existsUser.setClients(clients);
@@ -476,21 +489,22 @@ public class UserController {
      * @param builder
      *            Uri Component Builder
      * @return User with updated list of clients
+     * @throws Exception
      */
     @RequestMapping(value = "/{userId}/clients/{clientId}", method = RequestMethod.DELETE, produces = { "application/json", "application/xml" })
-    public ResponseEntity<User> removeClientFromUser(@PathVariable Long userId, @PathVariable Long clientId, UriComponentsBuilder builder) {
+    public ResponseEntity<User> removeClientFromUser(@PathVariable Long userId, @PathVariable Long clientId, UriComponentsBuilder builder) throws Exception {
         logger.info("UserController - removeClientFromUser: reached with userId '" + userId + "' / clientId '" + clientId + "'");
 
         // check if an user with id exists
         User updatedUser = null;
         User existsUser = userService.get(userId);
         if (existsUser == null) {
-            return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+            throw new ObjectNotFoundException("User with id '" + userId + "' not found.");
         } else {
             Set<Client> clients = existsUser.getClients();
             Client client = clientService.get(clientId);
             if (client == null) {
-                return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+                throw new ObjectNotFoundException("Client with id '" + clientId + "' not found.");
             } else {
                 clients.remove(client);
                 existsUser.setClients(clients);
@@ -512,15 +526,16 @@ public class UserController {
      * @param userId
      *            Id of the user
      * @return List of clients.
+     * @throws Exception
      */
     @RequestMapping(value = "/{userId}/clients", method = RequestMethod.GET, produces = { "application/json", "application/xml" })
-    public ResponseEntity<JaxbList<Client>> getClientsByUserId(@PathVariable Long userId) {
+    public ResponseEntity<JaxbList<Client>> getClientsByUserId(@PathVariable Long userId) throws Exception {
         logger.info("UserController - getClientsByUserId: reached with userId: '" + userId + "'");
 
         // check if an user with id exists
         User existsUser = userService.get(userId);
         if (existsUser == null) {
-            return new ResponseEntity<JaxbList<Client>>(HttpStatus.NOT_FOUND);
+            throw new ObjectNotFoundException("User with id '" + userId + "' not found.");
         } else {
             Set<Client> clients = existsUser.getClients();
             List<Client> clientList = new ArrayList<Client>();
@@ -543,21 +558,22 @@ public class UserController {
      * @param builder
      *            Uri Components Builder
      * @return User Object with updated list of resourceRoles.
+     * @throws Exception
      */
     @RequestMapping(value = "/{userId}/resourceRoles/{resourceRoleId}", method = RequestMethod.POST, produces = { "application/json", "application/xml" })
-    public ResponseEntity<User> addResourceRoleToUser(@PathVariable Long userId, @PathVariable Long resourceRoleId, UriComponentsBuilder builder) {
+    public ResponseEntity<User> addResourceRoleToUser(@PathVariable Long userId, @PathVariable Long resourceRoleId, UriComponentsBuilder builder) throws Exception {
         logger.info("UserController - addResourceRoleToUser: reached with userId '" + userId + "' / resourceRoleId '" + resourceRoleId + "'");
 
         // check if an user with id exists
         User updatedUser = null;
         User existsUser = userService.get(userId);
         if (existsUser == null) {
-            return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+            throw new ObjectNotFoundException("User with id '" + userId + "' not found.");
         } else {
             Set<ResourceRole> resourceRoles = existsUser.getResourceRoles();
             ResourceRole resourceRole = resourceRoleService.get(resourceRoleId);
             if (resourceRole == null) {
-                return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+                throw new ObjectNotFoundException("Resource Role with id '" + resourceRoleId + "' not found.");
             } else {
                 resourceRoles.add(resourceRole);
                 existsUser.setResourceRoles(resourceRoles);
@@ -583,21 +599,22 @@ public class UserController {
      * @param builder
      *            Uri Component Builder
      * @return User with updated list of resourceRoles
+     * @throws Exception
      */
     @RequestMapping(value = "/{userId}/resourceRoles/{resourceRoleId}", method = RequestMethod.DELETE, produces = { "application/json", "application/xml" })
-    public ResponseEntity<User> removeResourceRoleFromUser(@PathVariable Long userId, @PathVariable Long resourceRoleId, UriComponentsBuilder builder) {
+    public ResponseEntity<User> removeResourceRoleFromUser(@PathVariable Long userId, @PathVariable Long resourceRoleId, UriComponentsBuilder builder) throws Exception {
         logger.info("UserController - removeResourceRoleFromUser: reached with userId '" + userId + "' / resourceRoleId '" + resourceRoleId + "'");
 
         // check if an user with id exists
         User updatedUser = null;
         User existsUser = userService.get(userId);
         if (existsUser == null) {
-            return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+            throw new ObjectNotFoundException("User with id '" + userId + "' not found.");
         } else {
             Set<ResourceRole> resourceRoles = existsUser.getResourceRoles();
             ResourceRole resourceRole = resourceRoleService.get(resourceRoleId);
             if (resourceRole == null) {
-                return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+                throw new ObjectNotFoundException("Resource Role with id '" + resourceRoleId + "' not found.");
             } else {
                 resourceRoles.remove(resourceRole);
                 existsUser.setResourceRoles(resourceRoles);
@@ -619,15 +636,16 @@ public class UserController {
      * @param userId
      *            Id of the user
      * @return List of resourceRoles.
+     * @throws Exception
      */
     @RequestMapping(value = "/{userId}/resourceRoles", method = RequestMethod.GET, produces = { "application/json", "application/xml" })
-    public ResponseEntity<JaxbList<ResourceRole>> getResourceRolesByUserId(@PathVariable Long userId) {
+    public ResponseEntity<JaxbList<ResourceRole>> getResourceRolesByUserId(@PathVariable Long userId) throws Exception {
         logger.info("UserController - getResourceRolesByUserId: reached with userId: '" + userId + "'");
 
         // check if an user with id exists
         User existsUser = userService.get(userId);
         if (existsUser == null) {
-            return new ResponseEntity<JaxbList<ResourceRole>>(HttpStatus.NOT_FOUND);
+            throw new ObjectNotFoundException("User with id '" + userId + "' not found.");
         } else {
             Set<ResourceRole> resourceRoles = existsUser.getResourceRoles();
             List<ResourceRole> resourceRoleList = new ArrayList<ResourceRole>();
@@ -653,16 +671,17 @@ public class UserController {
      * @param builder
      *            Uri Components Builder
      * @return User Object with updated list of projects.
+     * @throws Exception
      */
     @RequestMapping(value = "/{userId}/projects/{relType}/{projectId}", method = RequestMethod.POST, produces = { "application/json", "application/xml" })
-    public ResponseEntity<User> addProjectWithRelationTypeToUser(@PathVariable Long userId, @PathVariable String relType, @PathVariable Long projectId, UriComponentsBuilder builder) {
+    public ResponseEntity<User> addProjectWithRelationTypeToUser(@PathVariable Long userId, @PathVariable String relType, @PathVariable Long projectId, UriComponentsBuilder builder) throws Exception {
         logger.info("UserController - addProjectWithRelationTypeToUser: reached with userId '" + userId + "' / relType '" + relType + "' / projectId ' " + projectId + "'");
 
         // check if an user with id exists
         User updatedUser = null;
         User existsUser = userService.get(userId);
         if (existsUser == null) {
-            return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+            throw new ObjectNotFoundException("User with id '" + userId + "' not found.");
         } else {
             Set<Project> projects = null;
             if (relType.equals(User.RELATION_TYPE_ADMIN)) {
@@ -672,12 +691,12 @@ public class UserController {
             } else if (relType.equals(User.RELATION_TYPE_MEMBER)) {
                 projects = existsUser.getProjectsAsMember();
             } else {
-                return new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
+                throw new ObjectNotFoundException("Relationship Type '" + relType + "' wrong. Allowed values are member, prjmgr, admin.");
             }
 
             Project project = projectService.get(projectId);
             if (project == null) {
-                return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+                throw new ObjectNotFoundException("Project with id '" + projectId + "' not found.");
             } else {
                 projects.add(project);
 
@@ -688,7 +707,7 @@ public class UserController {
                 } else if (relType.equals(User.RELATION_TYPE_MEMBER)) {
                     existsUser.setProjectsAsMember(projects);
                 } else {
-                    return new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
+                    throw new ObjectNotFoundException("Relationship Type '" + relType + "' wrong. Allowed values are member, prjmgr, admin.");
                 }
                 updatedUser = userService.save(existsUser);
 
@@ -715,16 +734,18 @@ public class UserController {
      * @param builder
      *            Uri Component Builder
      * @return User with updated list of resourceRoles
+     * @throws Exception
      */
     @RequestMapping(value = "/{userId}/projects/{relType}/{projectId}", method = RequestMethod.DELETE, produces = { "application/json", "application/xml" })
-    public ResponseEntity<User> removeProjectWithRelationTypeToUser(@PathVariable Long userId, @PathVariable String relType, @PathVariable Long projectId, UriComponentsBuilder builder) {
+    public ResponseEntity<User> removeProjectWithRelationTypeToUser(@PathVariable Long userId, @PathVariable String relType, @PathVariable Long projectId, UriComponentsBuilder builder)
+            throws Exception {
         logger.info("UserController - removeProjectWithRelationTypeToUser: reached with userId '" + userId + "' / projectId '" + projectId + "' / relType '" + relType + "'");
 
         // check if an user with id exists
         User updatedUser = null;
         User existsUser = userService.get(userId);
         if (existsUser == null) {
-            return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+            throw new ObjectNotFoundException("User with id '" + userId + "' not found.");
         } else {
 
             Set<Project> projects = null;
@@ -735,13 +756,13 @@ public class UserController {
             } else if (relType.equals(User.RELATION_TYPE_MEMBER)) {
                 projects = existsUser.getProjectsAsMember();
             } else {
-                return new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
+                throw new ObjectNotFoundException("Relationship Type '" + relType + "' wrong. Allowed values are member, prjmgr, admin.");
             }
 
             // get project for given id
             Project project = projectService.get(projectId);
             if (project == null) {
-                return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+                throw new ObjectNotFoundException("Project with id '" + projectId + "' not found.");
             } else {
                 projects.remove(project);
 
@@ -752,7 +773,7 @@ public class UserController {
                 } else if (relType.equals(User.RELATION_TYPE_MEMBER)) {
                     existsUser.setProjectsAsMember(projects);
                 } else {
-                    return new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
+                    throw new ObjectNotFoundException("Relationship Type '" + relType + "' wrong. Allowed values are member, prjmgr, admin.");
                 }
 
                 updatedUser = userService.save(existsUser);
@@ -818,21 +839,22 @@ public class UserController {
      * @param builder
      *            Uri Components Builder
      * @return User Object with updated list of resourceReservations.
+     * @throws Exception
      */
     @RequestMapping(value = "/{userId}/resourceReservations/{resourceReservationId}", method = RequestMethod.POST, produces = { "application/json", "application/xml" })
-    public ResponseEntity<User> addResourceReservationToUser(@PathVariable Long userId, @PathVariable Long resourceReservationId, UriComponentsBuilder builder) {
+    public ResponseEntity<User> addResourceReservationToUser(@PathVariable Long userId, @PathVariable Long resourceReservationId, UriComponentsBuilder builder) throws Exception {
         logger.info("UserController - addResourceReservationToUser: reached with userId '" + userId + "' / resourceReservationId '" + resourceReservationId + "'");
 
         // check if an user with id exists
         User updatedUser = null;
         User existsUser = userService.get(userId);
         if (existsUser == null) {
-            return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+            throw new ObjectNotFoundException("User with id '" + userId + "' not found.");
         } else {
             Set<ResourceReservation> resourceReservations = existsUser.getResourceReservations();
             ResourceReservation resourceReservation = resourceReservationService.get(resourceReservationId);
             if (resourceReservation == null) {
-                return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+                throw new ObjectNotFoundException("Resource Reservation with id '" + resourceReservationId + "' not found.");
             } else {
                 resourceReservations.add(resourceReservation);
                 existsUser.setResourceReservations(resourceReservations);
@@ -859,21 +881,22 @@ public class UserController {
      * @param builder
      *            Uri Component Builder
      * @return User with updated list of resourceReservations
+     * @throws Exception
      */
     @RequestMapping(value = "/{userId}/resourceReservations/{resourceReservationId}", method = RequestMethod.DELETE, produces = { "application/json", "application/xml" })
-    public ResponseEntity<User> removeResourceReservationFromUser(@PathVariable Long userId, @PathVariable Long resourceReservationId, UriComponentsBuilder builder) {
+    public ResponseEntity<User> removeResourceReservationFromUser(@PathVariable Long userId, @PathVariable Long resourceReservationId, UriComponentsBuilder builder) throws Exception {
         logger.info("UserController - removeResourceReservationFromUser: reached with userId '" + userId + "' / resourceReservationId '" + resourceReservationId + "'");
 
         // check if an user with id exists
         User updatedUser = null;
         User existsUser = userService.get(userId);
         if (existsUser == null) {
-            return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+            throw new ObjectNotFoundException("User with id '" + userId + "' not found.");
         } else {
             Set<ResourceReservation> resourceReservations = existsUser.getResourceReservations();
             ResourceReservation resourceReservation = resourceReservationService.get(resourceReservationId);
             if (resourceReservation == null) {
-                return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+                throw new ObjectNotFoundException("Resource Reservation with id '" + resourceReservationId + "' not found.");
             } else {
                 resourceReservations.remove(resourceReservation);
                 existsUser.setResourceReservations(resourceReservations);
@@ -895,15 +918,16 @@ public class UserController {
      * @param userId
      *            Id of the user
      * @return List of resourceReservations.
+     * @throws Exception
      */
     @RequestMapping(value = "/{userId}/resourceReservations", method = RequestMethod.GET, produces = { "application/json", "application/xml" })
-    public ResponseEntity<JaxbList<ResourceReservation>> getResourceReservationsByUserId(@PathVariable Long userId) {
+    public ResponseEntity<JaxbList<ResourceReservation>> getResourceReservationsByUserId(@PathVariable Long userId) throws Exception {
         logger.info("UserController - getResourceReservationsByUserId: reached with userId: '" + userId + "'");
 
         // check if an user with id exists
         User existsUser = userService.get(userId);
         if (existsUser == null) {
-            return new ResponseEntity<JaxbList<ResourceReservation>>(HttpStatus.NOT_FOUND);
+            throw new ObjectNotFoundException("User with id '" + userId + "' not found.");
         } else {
             Set<ResourceReservation> resourceReservations = existsUser.getResourceReservations();
             List<ResourceReservation> resourceReservationList = new ArrayList<ResourceReservation>();

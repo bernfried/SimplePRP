@@ -6,15 +6,54 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "exception")
 public class ExceptionResponse {
 
+    // *******************************************************
+    // * Constants
+    // *******************************************************
+
+    public final static int EXCEPTION_CODE_OBJECT_NOT_FOUND = -100;
+    public static final int EXCEPTION_CODE_OBJECT_EXISTS_ALREADY = -110;
+    public static final int EXCEPTION_CODE_OBJECT_ACCESS_FORBIDDEN = -120;
+    public static final int EXCEPTION_CODE_OBJECT_DELETION_FAILED = -130;
+
+    // *******************************************************
+    // * Properties
+    // *******************************************************
+
+    private int code;
     private String name;
     private String description;
+    private Object object;
+
+    // *******************************************************
+    // * Constructors
+    // *******************************************************
 
     public ExceptionResponse() {
     }
 
-    public ExceptionResponse(String name, String description) {
+    public ExceptionResponse(int code, String name, String description) {
+        this.code = code;
         this.name = name;
         this.description = description;
+    }
+
+    public ExceptionResponse(int code, String name, String description, Object object) {
+        this.code = code;
+        this.name = name;
+        this.description = description;
+        this.object = object;
+    }
+
+    // *******************************************************
+    // * Getter & Setter
+    // *******************************************************
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
     }
 
     /**
@@ -49,6 +88,19 @@ public class ExceptionResponse {
         this.description = description;
     }
 
+    public Object getObject() {
+        return object;
+    }
+
+    @XmlElement
+    public void setObject(Object object) {
+        this.object = object;
+    }
+
+    // *******************************************************
+    // * General Methods
+    // *******************************************************
+
     /*
      * (non-Javadoc)
      * 
@@ -58,6 +110,7 @@ public class ExceptionResponse {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + this.code;
         result = prime * result + ((this.description == null) ? 0 : this.description.hashCode());
         result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
         return result;
@@ -77,6 +130,8 @@ public class ExceptionResponse {
         if (getClass() != obj.getClass())
             return false;
         ExceptionResponse other = (ExceptionResponse) obj;
+        if (this.code != other.code)
+            return false;
         if (this.description == null) {
             if (other.description != null)
                 return false;
@@ -97,7 +152,7 @@ public class ExceptionResponse {
      */
     @Override
     public String toString() {
-        return "ExceptionResponse [name=" + this.name + ", description=" + this.description + "]";
+        return "ExceptionResponse [code=" + this.code + ", name=" + this.name + ", description=" + this.description + "]";
     }
 
 }

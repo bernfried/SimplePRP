@@ -10,6 +10,47 @@
         http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
     
+    <!-- Database -->
+	<beans:bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <beans:property name="driverClassName" value="com.mysql.jdbc.Driver" />
+        <beans:property name="url" value="jdbc:mysql://localhost:8889/simpleprp" />
+        <beans:property name="username" value="root" />
+        <beans:property name="password" value="password" />
+    </beans:bean>
+    
+    <beans:bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
+	<beans:bean id="jpaDialect" class="org.springframework.orm.jpa.vendor.HibernateJpaDialect" />
+	<beans:bean id="jpaAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+	
+	<jpa:repositories base-package="de.webertise.simpleprp.model.dao" />
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+		
+    <beans:bean id="entityManagerFactory" name="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <beans:property name="dataSource" ref="dataSource" />
+		<beans:property name="packagesToScan" value="de.webertise.simpleprp.model" />
+        <beans:property name="jpaVendorAdapter" ref="jpaAdapter"/>
+    	<beans:property name="jpaDialect" ref="jpaDialect" />
+    	<beans:property name="persistenceUnitName" value="SimplePRP-PU" />
+        <beans:property name="jpaProperties">
+        	<beans:props>
+        		<beans:prop key="hibernate.hbm2ddl.auto">create</beans:prop>
+        		<!-- beans:prop key="hibernate.hbm2ddl.auto">create-drop</beans:prop -->
+        		<beans:prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</beans:prop>
+        	</beans:props>
+        </beans:property>
+        <beans:property name="loadTimeWeaver">
+            <beans:bean class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver"/>
+        </beans:property>
+    </beans:bean>
+    
+    <!-- Transaction -->
+	<beans:bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<beans:property name="entityManagerFactory" ref="entityManagerFactory"/>
+		<beans:property name="dataSource" ref="dataSource"/>
+		<beans:property name="jpaDialect" ref="jpaDialect"/>
+	</beans:bean>
+	<tx:annotation-driven transaction-manager="transactionManager"/>
     
 
 </beans:beans>
