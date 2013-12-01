@@ -1,6 +1,8 @@
 package de.webertise.simpleprp.exception;
 
-public class ObjectAccessForbiddenException extends Exception {
+import de.webertise.simpleprp.exception.general.AbstractException;
+
+public class ObjectAccessForbiddenException extends AbstractException {
 
     private static final long serialVersionUID = -3257536231500990208L;
 
@@ -12,4 +14,7 @@ public class ObjectAccessForbiddenException extends Exception {
         super(message);
     }
 
+    public ObjectAccessForbiddenException(String message, Object object) {
+        super(message, object);
+    }
 }

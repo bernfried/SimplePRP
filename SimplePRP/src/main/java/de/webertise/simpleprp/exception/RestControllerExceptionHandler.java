@@ -15,21 +15,21 @@ public class RestControllerExceptionHandler {
     @ExceptionHandler(ObjectNotFoundException.class)
     protected ResponseEntity<ExceptionResponse> handleObjectNotFoundException(ObjectNotFoundException ex) {
         logger.debug("### RestResponseEntityExceptionHandler - handleObjectNotFoundException: reached.");
-        ExceptionResponse exceptionResponse = new ExceptionResponse(ExceptionResponse.EXCEPTION_CODE_OBJECT_NOT_FOUND, "ObjectNotFoundException", ex.getMessage());
+        ExceptionResponse exceptionResponse = new ExceptionResponse(ExceptionResponse.EXCEPTION_CODE_OBJECT_NOT_FOUND, "ObjectNotFoundException", ex.getMessage(), ex.getObject());
         return new ResponseEntity<ExceptionResponse>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ObjectExistsAlreadyException.class)
     protected ResponseEntity<ExceptionResponse> handleObjectExistsAlreadyException(ObjectExistsAlreadyException ex) {
         logger.debug("### RestResponseEntityExceptionHandler - handleObjectExistsAlreadyException: reached.");
-        ExceptionResponse exceptionResponse = new ExceptionResponse(ExceptionResponse.EXCEPTION_CODE_OBJECT_EXISTS_ALREADY, "ObjectExistsAlreadyException", ex.getMessage());
+        ExceptionResponse exceptionResponse = new ExceptionResponse(ExceptionResponse.EXCEPTION_CODE_OBJECT_EXISTS_ALREADY, "ObjectExistsAlreadyException", ex.getMessage(), ex.getObject());
         return new ResponseEntity<ExceptionResponse>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ObjectAccessForbiddenException.class)
     protected ResponseEntity<ExceptionResponse> handleObjectAccessForbiddenException(ObjectAccessForbiddenException ex) {
         logger.debug("### RestResponseEntityExceptionHandler - handleObjectAccessForbiddenException: reached.");
-        ExceptionResponse exceptionResponse = new ExceptionResponse(ExceptionResponse.EXCEPTION_CODE_OBJECT_ACCESS_FORBIDDEN, "ObjectAccessForbiddenException", ex.getMessage());
+        ExceptionResponse exceptionResponse = new ExceptionResponse(ExceptionResponse.EXCEPTION_CODE_OBJECT_ACCESS_FORBIDDEN, "ObjectAccessForbiddenException", ex.getMessage(), ex.getObject());
         return new ResponseEntity<ExceptionResponse>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 

@@ -1,6 +1,8 @@
 package de.webertise.simpleprp.exception;
 
-public class ObjectNotFoundException extends Exception {
+import de.webertise.simpleprp.exception.general.AbstractException;
+
+public class ObjectNotFoundException extends AbstractException {
 
     private static final long serialVersionUID = -3257536231500990208L;
 
@@ -10,6 +12,10 @@ public class ObjectNotFoundException extends Exception {
 
     public ObjectNotFoundException(String message) {
         super(message);
+    }
+
+    public ObjectNotFoundException(String message, Object object) {
+        super(message, object);
     }
 
 }

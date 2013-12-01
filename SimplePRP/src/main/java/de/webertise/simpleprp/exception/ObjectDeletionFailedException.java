@@ -1,10 +1,10 @@
 package de.webertise.simpleprp.exception;
 
-public class ObjectDeletionFailedException extends Exception {
+import de.webertise.simpleprp.exception.general.AbstractException;
+
+public class ObjectDeletionFailedException extends AbstractException {
 
     private static final long serialVersionUID = -3257536231500990208L;
-
-    private Object object;
 
     public ObjectDeletionFailedException() {
         super();
@@ -15,15 +15,7 @@ public class ObjectDeletionFailedException extends Exception {
     }
 
     public ObjectDeletionFailedException(String message, Object object) {
-        super(message);
-    }
-
-    public Object getObject() {
-        return object;
-    }
-
-    public void setObject(Object object) {
-        this.object = object;
+        super(message, object);
     }
 
 }

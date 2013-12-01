@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+// Logging
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+// Spring Framework
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,10 +22,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.util.UriComponentsBuilder;
 
+// Exceptions
 import de.webertise.simpleprp.exception.ObjectDeletionFailedException;
 import de.webertise.simpleprp.exception.ObjectExistsAlreadyException;
 import de.webertise.simpleprp.exception.ObjectNotFoundException;
+// Helper
 import de.webertise.simpleprp.helper.xml.JaxbList;
+// Entities of the model
 import de.webertise.simpleprp.model.Client;
 import de.webertise.simpleprp.model.Module;
 import de.webertise.simpleprp.model.Project;
@@ -31,6 +36,7 @@ import de.webertise.simpleprp.model.ResourceReservation;
 import de.webertise.simpleprp.model.ResourceRole;
 import de.webertise.simpleprp.model.Role;
 import de.webertise.simpleprp.model.User;
+// Services
 import de.webertise.simpleprp.service.ClientService;
 import de.webertise.simpleprp.service.ModuleService;
 import de.webertise.simpleprp.service.ProjectService;
@@ -162,11 +168,11 @@ public class UserController {
         // check if an user with that email and login name already exists
         User existsUser = userService.getByEmail(user.getEmail());
         if (existsUser != null) {
-            throw new ObjectExistsAlreadyException("User with email '" + user.getEmail() + "' exists already.");
+            throw new ObjectExistsAlreadyException("User with email '" + user.getEmail() + "' exists already.", existsUser);
         } else {
             existsUser = userService.getByLogin(user.getLogin());
             if (existsUser != null) {
-                throw new ObjectExistsAlreadyException("User with login '" + user.getLogin() + "' exists already.");
+                throw new ObjectExistsAlreadyException("User with login '" + user.getLogin() + "' exists already.", existsUser);
             }
         }
 
@@ -215,7 +221,7 @@ public class UserController {
         headers.setLocation(builder.path("/users/{id}").buildAndExpand(updatedUser.getId()).toUri());
 
         // return new user
-        return new ResponseEntity<User>(updatedUser, headers, HttpStatus.CREATED);
+        return new ResponseEntity<User>(updatedUser, headers, HttpStatus.OK);
     }
 
     /**
@@ -295,7 +301,7 @@ public class UserController {
                 headers.setLocation(builder.path("/users/{id}").buildAndExpand(updatedUser.getId()).toUri());
 
                 // return new user
-                return new ResponseEntity<User>(updatedUser, headers, HttpStatus.CREATED);
+                return new ResponseEntity<User>(updatedUser, headers, HttpStatus.OK);
             }
         }
     }
@@ -364,7 +370,7 @@ public class UserController {
                 headers.setLocation(builder.path("/users/{id}").buildAndExpand(updatedUser.getId()).toUri());
 
                 // return new user
-                return new ResponseEntity<User>(updatedUser, headers, HttpStatus.CREATED);
+                return new ResponseEntity<User>(updatedUser, headers, HttpStatus.OK);
             }
         }
     }
@@ -405,7 +411,7 @@ public class UserController {
                 headers.setLocation(builder.path("/users/{id}").buildAndExpand(updatedUser.getId()).toUri());
 
                 // return new user
-                return new ResponseEntity<User>(updatedUser, headers, HttpStatus.CREATED);
+                return new ResponseEntity<User>(updatedUser, headers, HttpStatus.OK);
             }
         }
     }
@@ -474,7 +480,7 @@ public class UserController {
                 headers.setLocation(builder.path("/users/{id}").buildAndExpand(updatedUser.getId()).toUri());
 
                 // return new user
-                return new ResponseEntity<User>(updatedUser, headers, HttpStatus.CREATED);
+                return new ResponseEntity<User>(updatedUser, headers, HttpStatus.OK);
             }
         }
     }
@@ -515,7 +521,7 @@ public class UserController {
                 headers.setLocation(builder.path("/users/{id}").buildAndExpand(updatedUser.getId()).toUri());
 
                 // return new user
-                return new ResponseEntity<User>(updatedUser, headers, HttpStatus.CREATED);
+                return new ResponseEntity<User>(updatedUser, headers, HttpStatus.OK);
             }
         }
     }
@@ -584,7 +590,7 @@ public class UserController {
                 headers.setLocation(builder.path("/users/{id}").buildAndExpand(updatedUser.getId()).toUri());
 
                 // return new user
-                return new ResponseEntity<User>(updatedUser, headers, HttpStatus.CREATED);
+                return new ResponseEntity<User>(updatedUser, headers, HttpStatus.OK);
             }
         }
     }
@@ -625,7 +631,7 @@ public class UserController {
                 headers.setLocation(builder.path("/users/{id}").buildAndExpand(updatedUser.getId()).toUri());
 
                 // return new user
-                return new ResponseEntity<User>(updatedUser, headers, HttpStatus.CREATED);
+                return new ResponseEntity<User>(updatedUser, headers, HttpStatus.OK);
             }
         }
     }
@@ -716,7 +722,7 @@ public class UserController {
                 headers.setLocation(builder.path("/users/{id}").buildAndExpand(updatedUser.getId()).toUri());
 
                 // return new user
-                return new ResponseEntity<User>(updatedUser, headers, HttpStatus.CREATED);
+                return new ResponseEntity<User>(updatedUser, headers, HttpStatus.OK);
             }
         }
     }
@@ -783,7 +789,7 @@ public class UserController {
                 headers.setLocation(builder.path("/users/{id}").buildAndExpand(updatedUser.getId()).toUri());
 
                 // return new user
-                return new ResponseEntity<User>(updatedUser, headers, HttpStatus.CREATED);
+                return new ResponseEntity<User>(updatedUser, headers, HttpStatus.OK);
             }
         }
     }
@@ -865,7 +871,7 @@ public class UserController {
                 headers.setLocation(builder.path("/users/{id}").buildAndExpand(updatedUser.getId()).toUri());
 
                 // return new user
-                return new ResponseEntity<User>(updatedUser, headers, HttpStatus.CREATED);
+                return new ResponseEntity<User>(updatedUser, headers, HttpStatus.OK);
             }
         }
     }
@@ -907,7 +913,7 @@ public class UserController {
                 headers.setLocation(builder.path("/users/{id}").buildAndExpand(updatedUser.getId()).toUri());
 
                 // return new user
-                return new ResponseEntity<User>(updatedUser, headers, HttpStatus.CREATED);
+                return new ResponseEntity<User>(updatedUser, headers, HttpStatus.OK);
             }
         }
     }
