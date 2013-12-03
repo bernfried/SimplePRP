@@ -27,6 +27,7 @@ import org.springframework.web.context.WebApplicationContext;
 import com.jayway.jsonpath.InvalidPathException;
 
 import de.webertise.simpleprp.controller.UserController;
+import de.webertise.simpleprp.service.TestDataService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:servlet-context-test.xml")
@@ -36,11 +37,15 @@ public class UserControllerTest {
     @Autowired
     private WebApplicationContext webAppCtx;
 
+    @Autowired
+    private TestDataService tds;
+
     private MockMvc mockMvc;
 
     @Before
     public void setup() {
         this.mockMvc = webAppContextSetup(this.webAppCtx).build();
+        // List<String> result = tds.generate(10);
     }
 
     @Test
@@ -78,7 +83,7 @@ public class UserControllerTest {
         // check result json string
         ResultMatcher rm = null;
         try {
-            rm = jsonPath("$.firstName").value("Bernfried1");
+            rm = jsonPath("$.firstName").value("Hans0");
         } catch (InvalidPathException e) {
             e.printStackTrace();
         }
@@ -106,7 +111,7 @@ public class UserControllerTest {
         // check result json string
         ResultMatcher rm = null;
         try {
-            rm = jsonPath("$.[0].firstName").value("Bernfried1");
+            rm = jsonPath("$.[0].firstName").value("Hans0");
         } catch (InvalidPathException e) {
             e.printStackTrace();
         }

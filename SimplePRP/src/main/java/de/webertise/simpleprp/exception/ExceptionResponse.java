@@ -15,6 +15,11 @@ public class ExceptionResponse {
     public static final int EXCEPTION_CODE_OBJECT_ACCESS_FORBIDDEN = -120;
     public static final int EXCEPTION_CODE_OBJECT_DELETION_FAILED = -130;
 
+    public static final int EXCEPTION_CODE_METHOD_ARGUMENT_NOT_VALID = -200;
+    public static final int EXCEPTION_CODE_HTTP_MEDIA_TYPE_NOT_SUPPORTED = -210;
+    public static final int EXCEPTION_CODE_HTTP_REQUEST_METHOD_NOT_SUPPORTED = -220;
+    public static final int EXCEPTION_CODE_HTTP_MEDIA_TYPE_NOT_ACCEPTABLE = -230;
+
     // *******************************************************
     // * Properties
     // *******************************************************

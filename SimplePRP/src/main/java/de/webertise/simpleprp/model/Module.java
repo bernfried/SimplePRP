@@ -7,9 +7,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -40,17 +39,8 @@ public class Module extends AbstractEntityObject {
     // * Relationships
     // *******************************************************
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "PRP_MODULE_RESOURCEROLE", joinColumns = { @JoinColumn(name = "MODULE_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "RESOURCEROLE_ID", referencedColumnName = "ID") })
-    private Set<ResourceRole> resourceRoles;
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "PRP_MODULE_RESOURCERESERVATION", joinColumns = { @JoinColumn(name = "MODULE_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "RESOURCERESERVATION_ID", referencedColumnName = "ID") })
+    @OneToMany(mappedBy = "module", fetch = FetchType.LAZY)
     private Set<ResourceReservation> resourceReservations;
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "PRP_USER_MODULE", joinColumns = { @JoinColumn(name = "MODULE_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "USER_ID", referencedColumnName = "ID") })
-    private Set<User> users;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PROJECT_ID", nullable = false)
@@ -104,23 +94,6 @@ public class Module extends AbstractEntityObject {
     }
 
     /**
-     * @return the resourceRoles
-     */
-    @XmlTransient
-    @JsonIgnore
-    public Set<ResourceRole> getResourceRoles() {
-        return this.resourceRoles;
-    }
-
-    /**
-     * @param resourceRoles
-     *            the resourceRoles to set
-     */
-    public void setResourceRoles(Set<ResourceRole> resourceRoles) {
-        this.resourceRoles = resourceRoles;
-    }
-
-    /**
      * @return the resourceReservations
      */
     @XmlTransient
@@ -135,23 +108,6 @@ public class Module extends AbstractEntityObject {
      */
     public void setResourceReservations(Set<ResourceReservation> resourceReservations) {
         this.resourceReservations = resourceReservations;
-    }
-
-    /**
-     * @return the users
-     */
-    @XmlTransient
-    @JsonIgnore
-    public Set<User> getUsers() {
-        return this.users;
-    }
-
-    /**
-     * @param users
-     *            the users to set
-     */
-    public void setUsers(Set<User> users) {
-        this.users = users;
     }
 
     /**

@@ -30,7 +30,6 @@ import de.webertise.simpleprp.exception.ObjectNotFoundException;
 import de.webertise.simpleprp.helper.xml.JaxbList;
 // Entities of the model
 import de.webertise.simpleprp.model.Client;
-import de.webertise.simpleprp.model.Module;
 import de.webertise.simpleprp.model.Project;
 import de.webertise.simpleprp.model.ResourceReservation;
 import de.webertise.simpleprp.model.ResourceRole;
@@ -331,116 +330,6 @@ public class UserController {
             JaxbList<Role> jaxbList = new JaxbList<Role>(roleList);
             // return list of roles
             return new ResponseEntity<JaxbList<Role>>(jaxbList, HttpStatus.OK);
-        }
-    }
-
-    /**
-     * Adds an existing module to an existing user.
-     * 
-     * @param userId
-     *            Id of the user
-     * @param moduleId
-     *            Id of the module
-     * @param builder
-     *            Uri Components Builder
-     * @return User Object with updated list of modules.
-     * @throws Exception
-     */
-    @RequestMapping(value = "/{userId}/modules/{moduleId}", method = RequestMethod.POST, produces = { "application/json", "application/xml" })
-    public ResponseEntity<User> addModuleToUser(@PathVariable Long userId, @PathVariable Long moduleId, UriComponentsBuilder builder) throws Exception {
-        logger.info("UserController - addModuleToUser: reached with userId '" + userId + "' / moduleId '" + moduleId + "'");
-
-        // check if an user with id exists
-        User updatedUser = null;
-        User existsUser = userService.get(userId);
-        if (existsUser == null) {
-            throw new ObjectNotFoundException("User with id '" + userId + "' not found.");
-        } else {
-            Set<Module> modules = existsUser.getModules();
-            Module module = moduleService.get(moduleId);
-            if (module == null) {
-                throw new ObjectNotFoundException("Module with id '" + moduleId + "' not found.");
-            } else {
-                modules.add(module);
-                existsUser.setModules(modules);
-                updatedUser = userService.save(existsUser);
-
-                // set http header (location)
-                HttpHeaders headers = new HttpHeaders();
-                headers.setLocation(builder.path("/users/{id}").buildAndExpand(updatedUser.getId()).toUri());
-
-                // return new user
-                return new ResponseEntity<User>(updatedUser, headers, HttpStatus.OK);
-            }
-        }
-    }
-
-    /**
-     * Removes an existing module by id from an existing user by id.
-     * 
-     * @param userId
-     *            Id of the user
-     * @param moduleId
-     *            Id of the module to be removed.
-     * @param builder
-     *            Uri Component Builder
-     * @return User with updated list of modules
-     * @throws Exception
-     */
-    @RequestMapping(value = "/{userId}/modules/{moduleId}", method = RequestMethod.DELETE, produces = { "application/json", "application/xml" })
-    public ResponseEntity<User> removeModuleFromUser(@PathVariable Long userId, @PathVariable Long moduleId, UriComponentsBuilder builder) throws Exception {
-        logger.info("UserController - removeModuleFromUser: reached with userId '" + userId + "' / moduleId '" + moduleId + "'");
-
-        // check if an user with id exists
-        User updatedUser = null;
-        User existsUser = userService.get(userId);
-        if (existsUser == null) {
-            throw new ObjectNotFoundException("User with id '" + userId + "' not found.");
-        } else {
-            Set<Module> modules = existsUser.getModules();
-            Module module = moduleService.get(moduleId);
-            if (module == null) {
-                throw new ObjectNotFoundException("Module with id '" + moduleId + "' not found.");
-            } else {
-                modules.remove(module);
-                existsUser.setModules(modules);
-                updatedUser = userService.save(existsUser);
-
-                // set http header (location)
-                HttpHeaders headers = new HttpHeaders();
-                headers.setLocation(builder.path("/users/{id}").buildAndExpand(updatedUser.getId()).toUri());
-
-                // return new user
-                return new ResponseEntity<User>(updatedUser, headers, HttpStatus.OK);
-            }
-        }
-    }
-
-    /**
-     * Get all modules of an user by userId
-     * 
-     * @param userId
-     *            Id of the user
-     * @return List of modules.
-     * @throws Exception
-     */
-    @RequestMapping(value = "/{userId}/modules", method = RequestMethod.GET, produces = { "application/json", "application/xml" })
-    public ResponseEntity<JaxbList<Module>> getModulesByUserId(@PathVariable Long userId) throws Exception {
-        logger.info("UserController - getModulesByUserId: reached with userId: '" + userId + "'");
-
-        // check if an user with id exists
-        User existsUser = userService.get(userId);
-        if (existsUser == null) {
-            throw new ObjectNotFoundException("User with id '" + userId + "' not found.");
-        } else {
-            Set<Module> modules = existsUser.getModules();
-            List<Module> moduleList = new ArrayList<Module>();
-            for (Module module : modules) {
-                moduleList.add(module);
-            }
-            JaxbList<Module> jaxbList = new JaxbList<Module>(moduleList);
-            // return list of modules
-            return new ResponseEntity<JaxbList<Module>>(jaxbList, HttpStatus.OK);
         }
     }
 

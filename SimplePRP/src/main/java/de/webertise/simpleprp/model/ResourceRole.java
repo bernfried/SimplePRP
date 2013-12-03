@@ -41,10 +41,6 @@ public class ResourceRole extends AbstractEntityObject {
     // *******************************************************
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "PRP_MODULE_RESOURCEROLE", joinColumns = { @JoinColumn(name = "RESOURCEROLE_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "MODULE_ID", referencedColumnName = "ID") })
-    private Set<Module> modules;
-
-    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "PRP_USER_RESOURCEROLE", joinColumns = { @JoinColumn(name = "RESOURCEROLE_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "USER_ID", referencedColumnName = "ID") })
     private Set<User> users;
 
@@ -80,23 +76,6 @@ public class ResourceRole extends AbstractEntityObject {
      */
     public void setName(String name) {
         this.name = name;
-    }
-
-    /**
-     * @return the modules
-     */
-    @XmlTransient
-    @JsonIgnore
-    public Set<Module> getModules() {
-        return this.modules;
-    }
-
-    /**
-     * @param modules
-     *            the modules to set
-     */
-    public void setModules(Set<Module> modules) {
-        this.modules = modules;
     }
 
     /**

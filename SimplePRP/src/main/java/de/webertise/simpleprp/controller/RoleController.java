@@ -40,7 +40,7 @@ public class RoleController {
     @RequestMapping(value = "/{roleId}", method = RequestMethod.GET, produces = { "application/json", "application/xml" })
     @ResponseBody
     public ResponseEntity<Role> getRoleById(@PathVariable Long roleId) {
-        logger.info("UserController - getRoleById: roleId = '" + roleId + "'");
+        logger.info("RoleController - getRoleById: roleId = '" + roleId + "'");
 
         // get the user by id
         Role role = roleService.get(roleId);

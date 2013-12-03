@@ -1,6 +1,7 @@
 package de.webertise.simpleprp.model;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -80,10 +81,6 @@ public class User extends AbstractEntityObject {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "PRP_USER_CLIENT", joinColumns = { @JoinColumn(name = "USER_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "CLIENT_ID", referencedColumnName = "ID") })
     private Set<Client> clients;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "PRP_USER_MODULE", joinColumns = { @JoinColumn(name = "USER_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "MODULE_ID", referencedColumnName = "ID") })
-    private Set<Module> modules;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "PRP_PROJECT_MEMBER", joinColumns = { @JoinColumn(name = "MEMBER_USER_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "PROJECT_ID", referencedColumnName = "ID") })
@@ -359,23 +356,6 @@ public class User extends AbstractEntityObject {
     }
 
     /**
-     * @return the modules
-     */
-    @XmlElementWrapper(name = "modules")
-    @XmlElement(name = "module")
-    public Set<Module> getModules() {
-        return this.modules;
-    }
-
-    /**
-     * @param modules
-     *            the modules to set
-     */
-    public void setModules(Set<Module> modules) {
-        this.modules = modules;
-    }
-
-    /**
      * @return the projectsAsMember
      */
     @XmlElementWrapper(name = "projectsasmember")
@@ -459,6 +439,112 @@ public class User extends AbstractEntityObject {
     public void setResourceReservations(Set<ResourceReservation> resourceReservations) {
         this.resourceReservations = resourceReservations;
     }
+
+    // *******************************************************
+    // * Custom Methods
+    // *******************************************************
+
+    /**
+     * Adds a role to the authorities set
+     * 
+     * @param role
+     */
+    public void addAuthority(Role role) {
+        if (this.authorities == null) {
+            this.authorities = new HashSet<Role>();
+        }
+        if (!this.authorities.contains(role)) {
+            this.authorities.add(role);
+        }
+    }
+
+    /**
+     * Adds a client to the clients set
+     * 
+     * @param client
+     */
+    public void addClient(Client client) {
+        if (this.clients == null) {
+            this.clients = new HashSet<Client>();
+        }
+        if (!this.clients.contains(client)) {
+            this.clients.add(client);
+        }
+    }
+
+    /**
+     * Adds a project as member to the projects set
+     * 
+     * @param project
+     */
+    public void addProjectAsMember(Project project) {
+        if (this.projectsAsMember == null) {
+            this.projectsAsMember = new HashSet<Project>();
+        }
+        if (!this.projectsAsMember.contains(project)) {
+            this.projectsAsMember.add(project);
+        }
+    }
+
+    /**
+     * Adds a project as prjmgr to the projects set
+     * 
+     * @param project
+     */
+    public void addProjectAsPrjMgr(Project project) {
+        if (this.projectsAsPrjMgr == null) {
+            this.projectsAsPrjMgr = new HashSet<Project>();
+        }
+        if (!this.projectsAsPrjMgr.contains(project)) {
+            this.projectsAsPrjMgr.add(project);
+        }
+    }
+
+    /**
+     * Adds a project as admin to the projects set
+     * 
+     * @param project
+     */
+    public void addProjectAsAdmin(Project project) {
+        if (this.projectsAsAdmin == null) {
+            this.projectsAsAdmin = new HashSet<Project>();
+        }
+        if (!this.projectsAsAdmin.contains(project)) {
+            this.projectsAsAdmin.add(project);
+        }
+    }
+
+    /**
+     * Adds a resource role to the resource role set
+     * 
+     * @param client
+     */
+    public void addResourceRole(ResourceRole resourceRole) {
+        if (this.resourceRoles == null) {
+            this.resourceRoles = new HashSet<ResourceRole>();
+        }
+        if (!this.resourceRoles.contains(resourceRole)) {
+            this.resourceRoles.add(resourceRole);
+        }
+    }
+
+    /**
+     * Adds a resource role to the resource role set
+     * 
+     * @param client
+     */
+    public void addResourceReservation(ResourceReservation resourceReservation) {
+        if (this.resourceReservations == null) {
+            this.resourceReservations = new HashSet<ResourceReservation>();
+        }
+        if (!this.resourceReservations.contains(resourceReservation)) {
+            this.resourceReservations.add(resourceReservation);
+        }
+    }
+
+    // *******************************************************
+    // * General Methods
+    // *******************************************************
 
     /*
      * (non-Javadoc)

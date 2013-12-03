@@ -54,6 +54,11 @@ public class Role extends AbstractEntityObject {
         this.name = name;
     }
 
+    public Role(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
+
     // *************************************************************************
     // * Getter & Setter
     // *************************************************************************
