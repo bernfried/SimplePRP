@@ -63,7 +63,7 @@ public class TestDataServiceImpl implements TestDataService {
         // calculate amounts
         int amountProjects = (int) amountUsers / 5;
         int amountModules = amountProjects * 10;
-        int amountRoles = 10;
+        int amountRoles = 5;
         int amountResRoles = 5;
         int amountClients = 5;
         int amountResourceReservations = 20;
@@ -74,7 +74,7 @@ public class TestDataServiceImpl implements TestDataService {
         // generate roles
         List<Role> roles = new ArrayList<Role>();
         for (int i = 0; i < amountRoles; i++) {
-            Role role = new Role("Role" + i, "Role" + i + " description");
+            Role role = new Role("ROLE_USER" + i, "ROLE_USER" + i + " description");
             role.setCreatedAt(new Date());
             role.setCreatedBy("testdata-generator");
             role.setChangedAt(new Date());

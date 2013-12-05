@@ -1,7 +1,7 @@
 <beans:beans 
+	xmlns:tx="http://www.springframework.org/schema/tx" 
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:beans="http://www.springframework.org/schema/beans"
-	xmlns:tx="http://www.springframework.org/schema/tx" 
     xmlns:security="http://www.springframework.org/schema/security"
     xmlns:jpa="http://www.springframework.org/schema/data/jpa"
     xsi:schemaLocation="
@@ -51,6 +51,5 @@
 		<beans:property name="jpaDialect" ref="jpaDialect"/>
 	</beans:bean>
 	<tx:annotation-driven transaction-manager="transactionManager"/>
-    
 
 </beans:beans>

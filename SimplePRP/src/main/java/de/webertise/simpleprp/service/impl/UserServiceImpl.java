@@ -91,4 +91,18 @@ public class UserServiceImpl implements UserService {
         return userDao.exists(id);
     }
 
+    @Override
+    public User authenticate(String login, String password) {
+        // get user by login
+        User user = userDao.getByLogin(login);
+        if (user != null) {
+            ShaPasswordEncoder pwdEnc = new ShaPasswordEncoder();
+            String pwd = pwdEnc.encodePassword(password, user.getSalt());
+            if (pwd.equals(user.getPassword())) {
+                return user;
+            }
+        }
+        return null;
+    }
+
 }
