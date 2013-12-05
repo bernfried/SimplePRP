@@ -121,4 +121,11 @@ public class RestControllerExceptionHandler extends ResponseEntityExceptionHandl
         return new ResponseEntity<ExceptionResponse>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(AuthenticationRequiredException.class)
+    protected ResponseEntity<ExceptionResponse> handleAuthenticationRequiredException(AuthenticationRequiredException ex) {
+        logger.debug("### RestResponseEntityExceptionHandler - handleAuthenticationRequiredException: reached.");
+        ExceptionResponse exceptionResponse = new ExceptionResponse(ExceptionResponse.EXCEPTION_CODE_AUTHENTICATION_REQUIRED, "AuthenticationRequiredException", ex.getMessage(), ex.getObject());
+        return new ResponseEntity<ExceptionResponse>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+
 }

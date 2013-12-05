@@ -20,6 +20,8 @@ public class ExceptionResponse {
     public static final int EXCEPTION_CODE_HTTP_REQUEST_METHOD_NOT_SUPPORTED = -220;
     public static final int EXCEPTION_CODE_HTTP_MEDIA_TYPE_NOT_ACCEPTABLE = -230;
 
+    public static final int EXCEPTION_CODE_AUTHENTICATION_REQUIRED = -300;
+
     // *******************************************************
     // * Properties
     // *******************************************************

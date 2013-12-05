@@ -10,11 +10,10 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-	<!-- Base package for the component scan -->
+    <!-- Base package for the component scan -->
+	<context:annotation-config/>
 	<context:component-scan base-package="de.webertise.simpleprp" />
 	
-	<context:annotation-config/>
-
     <beans:bean id="ctntNegMgr" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
  	    <beans:property name="favorPathExtension" value="false" />
 	    <beans:property name="favorParameter" value="false" />
