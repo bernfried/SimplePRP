@@ -14,7 +14,7 @@
 	    <security:intercept-url pattern="/auth/sessionAuthenticationError" access="isAnonymous()"/>
 	    <security:intercept-url pattern="/testdata/**" access="isAnonymous()"/>
     	<security:intercept-url pattern="/**" access="isAnonymous()" />
-      <!-- isFullyAuthenticated()   -->
+      <!-- isFullyAuthenticated() howe -->
     	
     	<security:form-login 
     		login-page="/auth/authenticationRequired"
