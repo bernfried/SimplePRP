@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import de.webertise.simpleprp.exception.AuthenticationRequiredException;
 
 /**
- * Handles requests for the authentication
+ * Handles requests for the authentication methods
  */
 @Controller
 @RequestMapping("/auth")
