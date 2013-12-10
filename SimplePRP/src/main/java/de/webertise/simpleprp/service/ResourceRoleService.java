@@ -1,5 +1,7 @@
 package de.webertise.simpleprp.service;
 
+import java.util.List;
+
 import de.webertise.simpleprp.model.ResourceRole;
 
 public interface ResourceRoleService {
@@ -38,4 +40,19 @@ public interface ResourceRoleService {
      */
     ResourceRole getByName(String name);
 
+    /**
+     * Checks the existence of a ResourceRole by id
+     * 
+     * @param id
+     *            ResourceRole ID
+     * @return true/false
+     */
+    boolean exists(Long id);
+
+    /**
+     * Finds all ResourceRoles
+     * 
+     * @return List of ResourceRole objects
+     */
+    List<ResourceRole> findAll();
 }

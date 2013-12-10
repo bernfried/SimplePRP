@@ -1,5 +1,7 @@
 package de.webertise.simpleprp.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,4 +37,13 @@ public class ResourceRoleServiceImpl implements ResourceRoleService {
         return resourceRoleDao.getByName(name);
     }
 
+    @Override
+    public boolean exists(Long id) {
+        return resourceRoleDao.exists(id);
+    }
+
+    @Override
+    public List<ResourceRole> findAll() {
+        return (List<ResourceRole>) resourceRoleDao.findAll();
+    }
 }

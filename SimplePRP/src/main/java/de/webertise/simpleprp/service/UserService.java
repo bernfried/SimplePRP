@@ -90,7 +90,7 @@ public interface UserService {
      * 
      * @return List of User objects
      */
-    List<User> findUsers();
+    List<User> findAll();
 
     /**
      * Checks the existence of a user by id

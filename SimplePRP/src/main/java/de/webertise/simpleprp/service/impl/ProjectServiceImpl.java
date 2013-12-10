@@ -1,5 +1,7 @@
 package de.webertise.simpleprp.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +35,16 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public Project getByName(String name) {
         return projectDao.getByName(name);
+    }
+
+    @Override
+    public boolean exists(Long id) {
+        return projectDao.exists(id);
+    }
+
+    @Override
+    public List<Project> findAll() {
+        return (List<Project>) projectDao.findAll();
     }
 
 }

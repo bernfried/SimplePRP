@@ -1,5 +1,7 @@
 package de.webertise.simpleprp.service;
 
+import java.util.List;
+
 import de.webertise.simpleprp.model.Project;
 
 public interface ProjectService {
@@ -38,4 +40,19 @@ public interface ProjectService {
      */
     Project getByName(String name);
 
+    /**
+     * Checks the existence of a Project by id
+     * 
+     * @param id
+     *            Project ID
+     * @return true/false
+     */
+    boolean exists(Long id);
+
+    /**
+     * Finds all Projects
+     * 
+     * @return List of Project objects
+     */
+    List<Project> findAll();
 }

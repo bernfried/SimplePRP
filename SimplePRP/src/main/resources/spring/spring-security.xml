@@ -28,12 +28,12 @@
     		logout-success-url="/auth/logoutSuccess"
     	/>
     	
-    	<security:session-management 
+    	<!-- security:session-management 
     		invalid-session-url="/auth/invalidSession"
     		session-authentication-error-url="/auth/sessionAuthenticationError">
     		<security:concurrency-control max-sessions="1" 
     		/>
-    	</security:session-management>
+    	</security:session-management -->
 
 	</security:http>
 

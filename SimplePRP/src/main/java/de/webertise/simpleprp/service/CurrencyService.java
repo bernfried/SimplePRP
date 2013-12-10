@@ -1,5 +1,7 @@
 package de.webertise.simpleprp.service;
 
+import java.util.List;
+
 import de.webertise.simpleprp.model.Currency;
 
 public interface CurrencyService {
@@ -38,4 +40,19 @@ public interface CurrencyService {
      */
     Currency getByName(String name);
 
+    /**
+     * Checks the existence of a currency by id
+     * 
+     * @param id
+     *            Currency ID
+     * @return true/false
+     */
+    boolean exists(Long id);
+
+    /**
+     * Finds all Currencies
+     * 
+     * @return List of Currency objects
+     */
+    List<Currency> findAll();
 }

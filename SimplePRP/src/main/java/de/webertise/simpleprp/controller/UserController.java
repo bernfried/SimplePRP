@@ -108,10 +108,10 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody
     ResponseEntity<JaxbList<User>> getUsers() {
-        logger.info("UserController - getAllUsers: reached");
+        logger.info("UserController - getUsers: reached");
 
         // get the user by id
-        List<User> users = userService.findUsers();
+        List<User> users = userService.findAll();
 
         JaxbList<User> jaxbList = new JaxbList<User>(users);
 

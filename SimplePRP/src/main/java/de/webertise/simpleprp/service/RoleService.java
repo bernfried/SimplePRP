@@ -1,5 +1,7 @@
 package de.webertise.simpleprp.service;
 
+import java.util.List;
+
 import de.webertise.simpleprp.model.Role;
 
 public interface RoleService {
@@ -37,5 +39,21 @@ public interface RoleService {
      * @return Role object
      */
     Role getByName(String name);
+
+    /**
+     * Checks the existence of a role by id
+     * 
+     * @param id
+     *            Role ID
+     * @return true/false
+     */
+    boolean exists(Long id);
+
+    /**
+     * Finds all Roles
+     * 
+     * @return List of Role objects
+     */
+    List<Role> findAll();
 
 }

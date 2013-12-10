@@ -1,5 +1,7 @@
 package de.webertise.simpleprp.service;
 
+import java.util.List;
+
 import de.webertise.simpleprp.model.Client;
 
 public interface ClientService {
@@ -38,4 +40,19 @@ public interface ClientService {
      */
     Client getByName(String name);
 
+    /**
+     * Checks the existence of a client by id
+     * 
+     * @param id
+     *            Client ID
+     * @return true/false
+     */
+    boolean exists(Long id);
+
+    /**
+     * Finds all Clients
+     * 
+     * @return List of Client objects
+     */
+    List<Client> findAll();
 }

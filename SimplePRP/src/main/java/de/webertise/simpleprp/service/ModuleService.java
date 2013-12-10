@@ -1,5 +1,7 @@
 package de.webertise.simpleprp.service;
 
+import java.util.List;
+
 import de.webertise.simpleprp.model.Module;
 
 public interface ModuleService {
@@ -38,4 +40,19 @@ public interface ModuleService {
      */
     Module getByName(String name);
 
+    /**
+     * Checks the existence of a module by id
+     * 
+     * @param id
+     *            Module ID
+     * @return true/false
+     */
+    boolean exists(Long id);
+
+    /**
+     * Finds all Modules
+     * 
+     * @return List of Module objects
+     */
+    List<Module> findAll();
 }

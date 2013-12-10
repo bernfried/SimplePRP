@@ -1,5 +1,7 @@
 package de.webertise.simpleprp.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,4 +37,13 @@ public class CustomerServiceImpl implements CustomerService {
         return customerDao.getByName(name);
     }
 
+    @Override
+    public boolean exists(Long id) {
+        return customerDao.exists(id);
+    }
+
+    @Override
+    public List<Customer> findAll() {
+        return (List<Customer>) customerDao.findAll();
+    }
 }

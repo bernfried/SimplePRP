@@ -1,5 +1,7 @@
 package de.webertise.simpleprp.service;
 
+import java.util.List;
+
 import de.webertise.simpleprp.model.ResourceReservation;
 
 public interface ResourceReservationService {
@@ -38,4 +40,19 @@ public interface ResourceReservationService {
      */
     ResourceReservation getByName(String name);
 
+    /**
+     * Checks the existence of a ResourceReservation by id
+     * 
+     * @param id
+     *            ResourceReservation ID
+     * @return true/false
+     */
+    boolean exists(Long id);
+
+    /**
+     * Finds all ResourceReservations
+     * 
+     * @return List of ResourceReservation objects
+     */
+    List<ResourceReservation> findAll();
 }

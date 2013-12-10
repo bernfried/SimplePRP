@@ -82,7 +82,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> findUsers() {
+    public List<User> findAll() {
         return (List<User>) userDao.findAll();
     }
 
