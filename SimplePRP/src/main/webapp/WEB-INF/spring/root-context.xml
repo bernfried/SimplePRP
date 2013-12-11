@@ -25,10 +25,10 @@
     </beans:property>
     <beans:property name="properties">
       <beans:props>
-        <beans:prop key="jdbc.driver"></beans:prop>
-        <beans:prop key="jdbc.url"></beans:prop>
-        <beans:prop key="jdbc.user"></beans:prop>
-        <beans:prop key="jdbc.pwd"></beans:prop>
+        <beans:prop key="jdbc.driver"/>
+        <beans:prop key="jdbc.url"/>
+        <beans:prop key="jdbc.user"/>
+        <beans:prop key="jdbc.pwd"/>
       </beans:props>
     </beans:property>
   </beans:bean>

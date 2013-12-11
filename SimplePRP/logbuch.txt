@@ -373,11 +373,25 @@ Logbuch:
 	- Inhalt von spring-database.xml nach root-context.xml verschoben, damit der Filter die 
 	  entityManagerFactory bean finden kann.	
 		
+***************************************************
+* Spring security
+***************************************************		
 		
-		
-		
-		
-		
+	- declared interception URLs (main/resources/spring/spring-security.xml 
+	
+***************************************************
+* Property externalisation
+***************************************************	
+
+	 - Einführung einer Datei simplePRP.properties zur Konfiguration systemspezifischer Parameter
+	 - Wird in root-context.xml eingelesen 
+	 - Verwendung unter <user.home>/simplePRP/simplePRP.properties
+	 
+***************************************************
+* Database parameter externalisation
+***************************************************
+
+	- Auslagerung der JDBC-Verbindungsparameter nach simplePRP.properties
 		
 		
 		
