@@ -10,30 +10,14 @@
     auto-config="true"
     use-expressions="true">
     <security:intercept-url
-      pattern="/auth/login"
-      access="isAnonymous()"/>
-    <security:intercept-url
       pattern="/auth/loginSuccess"
-      access="isAnonymous()"/>
+      access="isFullyAuthenticated()"/>
     <security:intercept-url
-      pattern="/auth/logoutSuccess"
-      access="isAnonymous()"/>
-    <security:intercept-url
-      pattern="/auth/authenticationFailed"
-      access="isAnonymous()"/>
-    <security:intercept-url
-      pattern="/auth/invalidSession"
-      access="isAnonymous()"/>
-    <security:intercept-url
-      pattern="/auth/sessionAuthenticationError"
-      access="isAnonymous()"/>
-    <security:intercept-url
-      pattern="/testdata/**"
+      pattern="/auth/**"
       access="isAnonymous()"/>
     <security:intercept-url
       pattern="/**"
-      access="isAnonymous()"/>
-    <!-- isFullyAuthenticated() howe -->
+      access="isFullyAuthenticated()"/>
 
     <security:form-login
       login-page="/auth/authenticationRequired"
@@ -58,8 +42,7 @@
 
   <!-- Defines the custom implementation of AuthenticationProvider -->
   <security:authentication-manager>
-    <security:authentication-provider ref="customAuthenticationProvider">
-    </security:authentication-provider>
+    <security:authentication-provider ref="customAuthenticationProvider"/>
   </security:authentication-manager>
 
 </beans:beans>
