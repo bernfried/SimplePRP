@@ -12,10 +12,10 @@
     
     <!-- Database -->
 	<beans:bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <beans:property name="driverClassName" value="com.mysql.jdbc.Driver" />
-        <beans:property name="url" value="jdbc:mysql://localhost:8889/simpleprp" />
-        <beans:property name="username" value="root" />
-        <beans:property name="password" value="password" />
+        <beans:property name="driverClassName" value="${jdbc.driver}" />
+        <beans:property name="url" value="${jdbc.url}" />
+        <beans:property name="username" value="${jdbc.user}" />
+        <beans:property name="password" value="${jdbc.pwd}" />
     </beans:bean>
     
     <beans:bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
@@ -34,7 +34,7 @@
     	<beans:property name="persistenceUnitName" value="SimplePRP-PU" />
         <beans:property name="jpaProperties">
         	<beans:props>
-        		<beans:prop key="hibernate.hbm2ddl.auto">create-drop</beans:prop>
+        		<beans:prop key="hibernate.hbm2ddl.auto">none</beans:prop>
         		<!-- beans:prop key="hibernate.hbm2ddl.auto">create-drop</beans:prop -->
         		<beans:prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</beans:prop>
         	</beans:props>
