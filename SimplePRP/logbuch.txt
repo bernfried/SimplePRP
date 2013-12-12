@@ -23,7 +23,7 @@ Logbuch:
 			- impl (service implementations)
 
 ***************************************************
-* Lokalisierung hinzugef웗t
+* Lokalisierung hinzugef체gt
 ***************************************************
 
 	- Neue Properties Dateien unter src/main/resources angelegt (resources_de.properties/resources_en.properties)
@@ -58,7 +58,7 @@ Logbuch:
 		<!-- Language -->
     	<beans:import resource="classpath:spring/spring-language.xml" />
     	
-    - views/home.jsp angepasst, um Mehrsprachigkeit testen zu k쉗nen
+    - views/home.jsp angepasst, um Mehrsprachigkeit testen zu k철nnen
     	
     	<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
     	...
@@ -66,10 +66,10 @@ Logbuch:
     	
 		
 ***************************************************
-* Erster Ausf웘rungstest
+* Erster Ausf체hrungstest
 ***************************************************
 	
-	- Projekt "SimplePRP" ausw둯len
+	- Projekt "SimplePRP" ausw채hlen
 	- Run As => Run on Server
 	- Test der Anwendung => http://localhost:8080/simpleprp/
 	- Test der Sprachumschaltung 
@@ -133,7 +133,7 @@ Logbuch:
 		
 		</beans:beans>
 		
-	- pom.xml um zus둻zliche Abh둵gigkeiten erg둵zt
+	- pom.xml um zus채tzliche Abh채ngigkeiten erg채nzt
 	
 		<properties>
 			<java-version>1.6</java-version>
@@ -185,31 +185,31 @@ Logbuch:
 ***************************************************
 
 	- AbstractEntityObject erstellt, welches id, createdBy, createdAt, changedBy, changedAt 
-	  und version als Standard Properties f웦 Entities bereitstellt
+	  und version als Standard Properties f체r Entities bereitstellt
 	
 	- Erste Entity Objekte unter /model erstellen mit 1..N Relation: 
 		- User 
 		- Role
 	
-	- Restart erzeugt automatisch ein DB-Model in der MySQL DB => DB Model pr웖en
+	- Restart erzeugt automatisch ein DB-Model in der MySQL DB => DB Model pr체fen
 	
-	- Implementierung eines DAO Interface f웦 User und f웦 Role basierend auf CrudRepository
+	- Implementierung eines DAO Interface f체r User und f체r Role basierend auf CrudRepository
 	
 	- Definition von weiteren Methoden im Interface z.B. getByLogin(...)
 	
-	- Service Interfaces f웦 User und Role erstellen
+	- Service Interfaces f체r User und Role erstellen
 		- UserService und RoleService
-		- Alle Dao Interface Methoden werden ebenfalls als Methoden in den Service 웑ernommen.
+		- Alle Dao Interface Methoden werden ebenfalls als Methoden in den Service 체bernommen.
 		
-	- Service Implementierungen f웦 RoleService und User Service erstellen
-	    - alle Methoden des Service Interface implementieren auf Basis der Dao Methoden, die aktuell 1:1 웑ereinstimmen
+	- Service Implementierungen f체r RoleService und User Service erstellen
+	    - alle Methoden des Service Interface implementieren auf Basis der Dao Methoden, die aktuell 1:1 체bereinstimmen
 	    
 
 ***************************************************
-* JSON als R웒kgabeformat definieren
+* JSON als R체ckgabeformat definieren
 ***************************************************
 
-	- Dependency f웦 Jackson und JAXB2 hinzuf웗en
+	- Dependency f체r Jackson und JAXB2 hinzuf체gen
 
 		<org.codehaus-jackson-version>1.9.13</org.codehaus-jackson-version>		
 		
@@ -242,7 +242,7 @@ Logbuch:
       		<version>1.5.10</version>
     	</dependency>
 
-	- in der spring-general.xml folgende Bl쉉ke definiert:
+	- in der spring-general.xml folgende Bl철cke definiert:
 	
 		a) den Content Negotiation Manager konfiguriert:
 	
@@ -301,21 +301,21 @@ Logbuch:
 			</mvc:message-converters>
 		</mvc:annotation-driven>
 		
-	- Damit die Model Klassen korrekt als XML/JSON ausgegeben werden k쉗nen, m웧sen
-		- @XmlRootElement und @XmlElement Annotations auf class und getter Ebene eingef웗t werden.
-		- mit @XmlTransient (f웦 XML) und @JsonIgnore (f웦 JSON) werden an den Gettern die Eigenschaften ausgeschlossen, 
+	- Damit die Model Klassen korrekt als XML/JSON ausgegeben werden k철nnen, m체ssen
+		- @XmlRootElement und @XmlElement Annotations auf class und getter Ebene eingef체gt werden.
+		- mit @XmlTransient (f체r XML) und @JsonIgnore (f체r JSON) werden an den Gettern die Eigenschaften ausgeschlossen, 
 		  die nicht in XML ausgegeben werden sollen.
-		- Die Erzeugung von XML und JSON f웘rt anf둵glich zu Problemen, die mit dem gegenseitigen Referenzieren 
-		  zwischen den Objekten zu tun hatten. Daher mussten die getter f웦 relationships teilweise mit @XmlTransient versehen werden.
-		- Generell stellt sich noch die Frage, wie man verschiedene Tiefen von XML / JSON Strukturen auf Bedarf steuern m쉉hte, wenn
+		- Die Erzeugung von XML und JSON f체hrt anf채nglich zu Problemen, die mit dem gegenseitigen Referenzieren 
+		  zwischen den Objekten zu tun hatten. Daher mussten die getter f체r relationships teilweise mit @XmlTransient versehen werden.
+		- Generell stellt sich noch die Frage, wie man verschiedene Tiefen von XML / JSON Strukturen auf Bedarf steuern m철chte, wenn
 		  alle Konfigurationen diesbezgl. in der Entity Klasse stattfinden.
 
 ***************************************************
-* JUnit Tests einbauen (speziell f웦 JSON)
+* JUnit Tests einbauen (speziell f체r JSON)
 ***************************************************
 
-	- Dependency for JUnit und weitere Libraries hinzuf웗en
-	- JUnit 4.7 => 4.11 ge둵dert
+	- Dependency for JUnit und weitere Libraries hinzuf체gen
+	- JUnit 4.7 => 4.11 ge채ndert
 		
 		<!-- Test -->
 		<dependency>
@@ -343,12 +343,12 @@ Logbuch:
 		    <scope>test</scope>
 		</dependency>
 		
-	- Die servlet-context.xml muss zus둻zlich auch in den Classpath gelegt werden. 
+	- Die servlet-context.xml muss zus채tzlich auch in den Classpath gelegt werden. 
 	  Kopie mit Namen "servlet-context-test.xml" wird daher unter src/main/resources 
-	  erstellt. Zus둻zlich werden alle generellen Konfigurationen in eine 
+	  erstellt. Zus채tzlich werden alle generellen Konfigurationen in eine 
 	  "/spring/spring-general.xml" ausgelagert, und in die servlet-context.xml und
-	  servlet-context-test.xml eingebunden, um Einstellungen f웦 Unit Tests und
-	  normale Ausf웘rung nicht redundant zu halten.
+	  servlet-context-test.xml eingebunden, um Einstellungen f체r Unit Tests und
+	  normale Ausf체hrung nicht redundant zu halten.
 	  
 	- Implementierung einer UserControllerText.java zum Test der entspr. Controller 
 	  Methoden.
@@ -358,8 +358,8 @@ Logbuch:
 * Hibernate Session
 ***************************************************
 		
-	- Filter in web.xml hinzugef웗t. Der stellt sicher, dass ein Entity Manager f웦 die Dauer eines Requests am leben bleibt
-	  und somit f웦 Lazy Zugriffe zur Verf웗ung steht.
+	- Filter in web.xml hinzugef체gt. Der stellt sicher, dass ein Entity Manager f체r die Dauer eines Requests am leben bleibt
+	  und somit f체r Lazy Zugriffe zur Verf체gung steht.
 		
 		<filter>
 			<filter-name>OpenEntityManagerFilter</filter-name>
@@ -374,23 +374,23 @@ Logbuch:
 	  entityManagerFactory bean finden kann.	
 		
 ***************************************************
-* Spring security
+* Spring Security
 ***************************************************		
 		
 	- declared interception URLs (main/resources/spring/spring-security.xml)
 	- BHO: habe erst mal noch die Security bzgl. isFullyAuthenticated wieder rausgenommen, solange wir noch keine Authentifizierung am Laufen haben.  
 	
 ***************************************************
-* Property externalisation
+* Property Externalisation
 ***************************************************	
 
 	 - Einfuehrung einer Datei simpleprp.properties zur Konfiguration systemspezifischer Parameter
 	 - Wird in general.xml eingelesen (nicht root-context.xml, da dort nur inkludiert werden soll.). 
-	 - Verwendung unter classpath:simpleprp.properties (wird f웦 git auf ignore gesetzt!)
-	 - Erstellung einer simpleprp.properties.template Datei, die als Vorlage f웦 die eigene lokale properties Datei herangezogen werden kann.
+	 - Verwendung unter classpath:simpleprp.properties (wird f체r git auf ignore gesetzt!)
+	 - Erstellung einer simpleprp.properties.template Datei, die als Vorlage f체r die eigene lokale properties Datei herangezogen werden kann.
 	 
 ***************************************************
-* Database parameter externalisation
+* Database Parameter Externalisation
 ***************************************************
 
 	- Auslagerung der JDBC-Verbindungsparameter nach simpleprp.properties
