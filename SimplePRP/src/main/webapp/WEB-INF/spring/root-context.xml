@@ -13,28 +13,10 @@
         http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
 
-  <beans:bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-    <beans:property
-      name="ignoreResourceNotFound"
-      value="true"/>
-    <beans:property name="locations">
-      <beans:list>
-        <beans:value>file:${user.home}${file.separator}simplePRP${file.separator}simplePRP.properties
-        </beans:value>
-      </beans:list>
-    </beans:property>
-    <beans:property name="properties">
-      <beans:props>
-        <beans:prop key="jdbc.driver"/>
-        <beans:prop key="jdbc.url"/>
-        <beans:prop key="jdbc.user"/>
-        <beans:prop key="jdbc.pwd"/>
-      </beans:props>
-    </beans:property>
-  </beans:bean>
-
   <context:component-scan base-package="de.webertise.simpleprp"/>
 
+  <!-- General -->
+  <beans:import resource="classpath:spring/spring-general.xml"/>
 
   <!-- Database & Transaction -->
   <beans:import resource="classpath:spring/spring-database.xml"/>

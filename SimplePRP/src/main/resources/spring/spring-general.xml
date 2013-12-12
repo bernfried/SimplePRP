@@ -1,69 +1,117 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans:beans 
-    xmlns:beans="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xmlns:mvc="http://www.springframework.org/schema/mvc"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:util="http://www.springframework.org/schema/util"
-	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+<beans:beans
+  xmlns:beans="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:mvc="http://www.springframework.org/schema/mvc"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <!-- Base package for the component scan -->
-	<context:annotation-config/>
-	<context:component-scan base-package="de.webertise.simpleprp" />
-	
-    <beans:bean id="ctntNegMgr" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
- 	    <beans:property name="favorPathExtension" value="false" />
-	    <beans:property name="favorParameter" value="false" />
-	    <beans:property name="parameterName" value="mediaType" />
-	    <beans:property name="ignoreAcceptHeader" value="false"/>
-	    <beans:property name="useJaf" value="false"/>
-	    <beans:property name="defaultContentType" value="application/json" />
-	    <beans:property name="mediaTypes">
-	        <beans:map>
-	            <beans:entry key="xml"><util:constant static-field="org.springframework.http.MediaType.APPLICATION_XML_VALUE"/></beans:entry>
-	            <beans:entry key="json"><util:constant static-field="org.springframework.http.MediaType.APPLICATION_JSON_VALUE"/></beans:entry>
-	       </beans:map>
-	    </beans:property>
-  	</beans:bean>
-  	
- 	<beans:bean id="jaxb2Marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
-		<beans:property name="classesToBeBound">
-			<beans:list> 
-				<beans:value>de.webertise.simpleprp.model.User</beans:value>
-				<beans:value>de.webertise.simpleprp.model.Client</beans:value>
-				<beans:value>de.webertise.simpleprp.model.Currency</beans:value>
-				<beans:value>de.webertise.simpleprp.model.Customer</beans:value>
-				<beans:value>de.webertise.simpleprp.model.Module</beans:value>
-				<beans:value>de.webertise.simpleprp.model.Project</beans:value>
-				<beans:value>de.webertise.simpleprp.model.ResourceReservation</beans:value>
-				<beans:value>de.webertise.simpleprp.model.ResourceRole</beans:value>
-				<beans:value>de.webertise.simpleprp.model.Role</beans:value>
-				<beans:value>de.webertise.simpleprp.model.general.AbstractEntityObject</beans:value>
-				<beans:value>de.webertise.simpleprp.exception.ExceptionResponse</beans:value>
-			</beans:list>
-		</beans:property>
-		<beans:property name="marshallerProperties">
-			<beans:map>
-				<beans:entry>
-					<beans:key><util:constant static-field="javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT"/></beans:key>
-					<beans:value type="java.lang.Boolean">true</beans:value>
-				</beans:entry>
-			</beans:map>
-		</beans:property>
-	</beans:bean>
+  <!-- Base package for the component scan -->
+  <context:annotation-config/>
+  <context:component-scan base-package="de.webertise.simpleprp"/>
 
-	<!-- assign message converters -->
-	<mvc:annotation-driven content-negotiation-manager="ctntNegMgr">
-		<mvc:message-converters register-defaults="true">
-			<beans:bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"/>
-			<beans:bean class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
-		  		<beans:property name="marshaller" ref="jaxb2Marshaller"></beans:property>
-		  		<beans:property name="unmarshaller" ref="jaxb2Marshaller"></beans:property>
-			</beans:bean>
-		</mvc:message-converters>
-	</mvc:annotation-driven>
+  <beans:bean
+    id="ctntNegMgr"
+    class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+    <beans:property
+      name="favorPathExtension"
+      value="false"/>
+    <beans:property
+      name="favorParameter"
+      value="false"/>
+    <beans:property
+      name="parameterName"
+      value="mediaType"/>
+    <beans:property
+      name="ignoreAcceptHeader"
+      value="false"/>
+    <beans:property
+      name="useJaf"
+      value="false"/>
+    <beans:property
+      name="defaultContentType"
+      value="application/json"/>
+    <beans:property name="mediaTypes">
+      <beans:map>
+        <beans:entry key="xml">
+          <util:constant static-field="org.springframework.http.MediaType.APPLICATION_XML_VALUE"/>
+        </beans:entry>
+        <beans:entry key="json">
+          <util:constant static-field="org.springframework.http.MediaType.APPLICATION_JSON_VALUE"/>
+        </beans:entry>
+      </beans:map>
+    </beans:property>
+  </beans:bean>
+
+  <beans:bean
+    id="jaxb2Marshaller"
+    class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+    <beans:property name="classesToBeBound">
+      <beans:list>
+        <beans:value>de.webertise.simpleprp.model.User</beans:value>
+        <beans:value>de.webertise.simpleprp.model.Client</beans:value>
+        <beans:value>de.webertise.simpleprp.model.Currency</beans:value>
+        <beans:value>de.webertise.simpleprp.model.Customer</beans:value>
+        <beans:value>de.webertise.simpleprp.model.Module</beans:value>
+        <beans:value>de.webertise.simpleprp.model.Project</beans:value>
+        <beans:value>de.webertise.simpleprp.model.ResourceReservation</beans:value>
+        <beans:value>de.webertise.simpleprp.model.ResourceRole</beans:value>
+        <beans:value>de.webertise.simpleprp.model.Role</beans:value>
+        <beans:value>de.webertise.simpleprp.model.general.AbstractEntityObject</beans:value>
+        <beans:value>de.webertise.simpleprp.exception.ExceptionResponse</beans:value>
+      </beans:list>
+    </beans:property>
+    <beans:property name="marshallerProperties">
+      <beans:map>
+        <beans:entry>
+          <beans:key>
+            <util:constant static-field="javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT"/>
+          </beans:key>
+          <beans:value type="java.lang.Boolean">true</beans:value>
+        </beans:entry>
+      </beans:map>
+    </beans:property>
+  </beans:bean>
+
+  <!-- assign message converters -->
+  <mvc:annotation-driven content-negotiation-manager="ctntNegMgr">
+    <mvc:message-converters register-defaults="true">
+      <beans:bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"/>
+      <beans:bean class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
+        <beans:property
+          name="marshaller"
+          ref="jaxb2Marshaller"></beans:property>
+        <beans:property
+          name="unmarshaller"
+          ref="jaxb2Marshaller"></beans:property>
+      </beans:bean>
+    </mvc:message-converters>
+  </mvc:annotation-driven>
+
+  <!-- Properties -->
+  <beans:bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <beans:property
+      name="ignoreResourceNotFound"
+      value="true"/>
+    <beans:property name="locations">
+      <beans:list>
+        <beans:value>classpath:simpleprp.properties
+        </beans:value>
+      </beans:list>
+    </beans:property>
+    <beans:property name="properties">
+      <beans:props>
+        <beans:prop key="jdbc.driver"/>
+        <beans:prop key="jdbc.url"/>
+        <beans:prop key="jdbc.user"/>
+        <beans:prop key="jdbc.pwd"/>
+      </beans:props>
+    </beans:property>
+  </beans:bean>
+
 
 </beans:beans>

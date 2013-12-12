@@ -377,21 +377,23 @@ Logbuch:
 * Spring security
 ***************************************************		
 		
-	- declared interception URLs (main/resources/spring/spring-security.xml 
+	- declared interception URLs (main/resources/spring/spring-security.xml)
+	- BHO: habe erst mal noch die Security bzgl. isFullyAuthenticated wieder rausgenommen, solange wir noch keine Authentifizierung am Laufen haben.  
 	
 ***************************************************
 * Property externalisation
 ***************************************************	
 
-	 - Einführung einer Datei simplePRP.properties zur Konfiguration systemspezifischer Parameter
-	 - Wird in root-context.xml eingelesen 
-	 - Verwendung unter <user.home>/simplePRP/simplePRP.properties
+	 - Einfuehrung einer Datei simpleprp.properties zur Konfiguration systemspezifischer Parameter
+	 - Wird in general.xml eingelesen (nicht root-context.xml, da dort nur inkludiert werden soll.). 
+	 - Verwendung unter classpath:simpleprp.properties (wird fŸr git auf ignore gesetzt!)
+	 - Erstellung einer simpleprp.properties.template Datei, die als Vorlage fŸr die eigene lokale properties Datei herangezogen werden kann.
 	 
 ***************************************************
 * Database parameter externalisation
 ***************************************************
 
-	- Auslagerung der JDBC-Verbindungsparameter nach simplePRP.properties
+	- Auslagerung der JDBC-Verbindungsparameter nach simpleprp.properties
 		
 		
 		

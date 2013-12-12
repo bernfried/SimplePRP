@@ -17,7 +17,7 @@
       access="isAnonymous()"/>
     <security:intercept-url
       pattern="/**"
-      access="isFullyAuthenticated()"/>
+      access="isAnonymous()"/>
 
     <security:form-login
       login-page="/auth/authenticationRequired"

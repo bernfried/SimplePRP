@@ -1,0 +1,4 @@
+jdbc.driver=com.mysql.jdbc.Driver
+jdbc.url=jdbc:mysql://<host>:<port>/<database-name>
+jdbc.user=<username>
+jdbc.pwd=<password>
