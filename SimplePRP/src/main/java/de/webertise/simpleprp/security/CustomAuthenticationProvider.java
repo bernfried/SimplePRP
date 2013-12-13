@@ -45,12 +45,12 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
         // get login and password from request using the authentication object
-        String login = String.valueOf(authentication.getPrincipal());
+        String username = String.valueOf(authentication.getPrincipal());
         String password = String.valueOf(authentication.getCredentials());
 
-        logger.debug("authenticate(): with login='" + login + "' and password='" + password + "'");
+        logger.debug("authenticate(): with username='" + username + "' and password='" + password + "'");
 
-        User user = userService.authenticate(login, password);
+        User user = userService.authenticate(username, password);
 
         if (user != null) {
             Set<Role> roles = user.getAuthorities();
@@ -58,7 +58,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             for (Role role : roles) {
                 authorities.add(new SimpleGrantedAuthority(role.getName()));
             }
-            return new UsernamePasswordAuthenticationToken(user.getLogin(), user.getPassword(), authorities);
+            return new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword(), authorities);
         }
         return null;
 

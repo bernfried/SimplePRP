@@ -99,8 +99,8 @@
       value="true"/>
     <beans:property name="locations">
       <beans:list>
-        <beans:value>classpath:simpleprp.properties</beans:value>
-        <beans:value>file:${user.home}${file.separator}simplePRP${file.separator}simplePRP.properties</beans:value>
+        <beans:value>classpath:simpleprp.properties
+        </beans:value>
       </beans:list>
     </beans:property>
     <beans:property name="properties">

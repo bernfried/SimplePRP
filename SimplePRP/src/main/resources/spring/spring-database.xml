@@ -1,17 +1,13 @@
 <beans:beans
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:tx="http://www.springframework.org/schema/tx"
   xmlns:beans="http://www.springframework.org/schema/beans"
+  xmlns:tx="http://www.springframework.org/schema/tx"
   xmlns:security="http://www.springframework.org/schema/security"
   xmlns:jpa="http://www.springframework.org/schema/data/jpa"
-  xsi:schemaLocation="http://www.springframework.org/schema/beans 
-        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-        http://www.springframework.org/schema/security 
-        http://www.springframework.org/schema/security/spring-security-3.1.xsd
-        http://www.springframework.org/schema/data/jpa 
-        http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
-        http://www.springframework.org/schema/tx 
-        http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd 
+        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd 
+        http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd 
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
 
   <!-- Database -->
   <beans:bean
@@ -41,8 +37,6 @@
 
   <jpa:repositories base-package="de.webertise.simpleprp.model.dao"/>
 
-  <!-- Root Context: defines shared resources visible to all other web components -->
-
   <beans:bean
     id="entityManagerFactory"
     name="entityManagerFactory"
@@ -64,8 +58,7 @@
       value="SimplePRP-PU"/>
     <beans:property name="jpaProperties">
       <beans:props>
-        <beans:prop key="hibernate.hbm2ddl.auto">create</beans:prop>
-        <!-- beans:prop key="hibernate.hbm2ddl.auto">none</beans:prop -->
+        <beans:prop key="hibernate.hbm2ddl.auto">create-drop</beans:prop>
         <beans:prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</beans:prop>
       </beans:props>
     </beans:property>

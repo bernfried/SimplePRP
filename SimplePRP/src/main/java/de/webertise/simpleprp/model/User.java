@@ -24,7 +24,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import de.webertise.simpleprp.model.general.AbstractEntityObject;
 
 @Entity
-@Table(name = "PRP_USER", uniqueConstraints = { @UniqueConstraint(columnNames = { "login" }), @UniqueConstraint(columnNames = { "email" }) })
+@Table(name = "PRP_USER", uniqueConstraints = { @UniqueConstraint(columnNames = { "username" }), @UniqueConstraint(columnNames = { "email" }) })
 @XmlRootElement
 public class User extends AbstractEntityObject {
 
@@ -38,8 +38,8 @@ public class User extends AbstractEntityObject {
     // *******************************************************
     // * Specific Entity Properties
     // *******************************************************
-    @Column(name = "LOGIN", nullable = false, length = 20)
-    private String login;
+    @Column(name = "USERNAME", nullable = false, length = 20)
+    private String username;
 
     @Column(name = "PASSWORD", nullable = false, length = 50)
     private String password;
@@ -127,19 +127,19 @@ public class User extends AbstractEntityObject {
     // *******************************************************
 
     /**
-     * @return the login
+     * @return the username
      */
     @XmlElement
-    public String getLogin() {
-        return login;
+    public String getUsername() {
+        return username;
     }
 
     /**
-     * @param login
-     *            the login to set
+     * @param username
+     *            the username to set
      */
-    public void setLogin(String login) {
-        this.login = login;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     /**
@@ -563,7 +563,7 @@ public class User extends AbstractEntityObject {
         result = prime * result + this.failedLoginAttempts;
         result = prime * result + ((this.firstName == null) ? 0 : this.firstName.hashCode());
         result = prime * result + ((this.lastName == null) ? 0 : this.lastName.hashCode());
-        result = prime * result + ((this.login == null) ? 0 : this.login.hashCode());
+        result = prime * result + ((this.username == null) ? 0 : this.username.hashCode());
         result = prime * result + ((this.resourceRoles == null) ? 0 : this.resourceRoles.hashCode());
         return result;
     }
@@ -607,10 +607,10 @@ public class User extends AbstractEntityObject {
                 return false;
         } else if (!this.lastName.equals(other.lastName))
             return false;
-        if (this.login == null) {
-            if (other.login != null)
+        if (this.username == null) {
+            if (other.username != null)
                 return false;
-        } else if (!this.login.equals(other.login))
+        } else if (!this.username.equals(other.username))
             return false;
         if (this.resourceRoles == null) {
             if (other.resourceRoles != null)
@@ -627,7 +627,7 @@ public class User extends AbstractEntityObject {
      */
     @Override
     public String toString() {
-        return "User [login=" + this.login + ", firstName=" + this.firstName + ", lastName=" + this.lastName + ", email=" + this.email + ", failedLoginAttempts=" + this.failedLoginAttempts
+        return "User [username=" + this.username + ", firstName=" + this.firstName + ", lastName=" + this.lastName + ", email=" + this.email + ", failedLoginAttempts=" + this.failedLoginAttempts
                 + ", accountNonExpired=" + this.accountNonExpired + ", accountNonLocked=" + this.accountNonLocked + ", credentialsNonExpired=" + this.credentialsNonExpired + ", enabled="
                 + this.enabled + ", toString()=" + super.toString() + "]";
     }
