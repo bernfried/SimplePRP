@@ -58,7 +58,7 @@
       value="SimplePRP-PU"/>
     <beans:property name="jpaProperties">
       <beans:props>
-        <beans:prop key="hibernate.hbm2ddl.auto">create-drop</beans:prop>
+        <beans:prop key="hibernate.hbm2ddl.auto">none</beans:prop>
         <beans:prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</beans:prop>
       </beans:props>
     </beans:property>

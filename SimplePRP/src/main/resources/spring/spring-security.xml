@@ -15,6 +15,9 @@
     <security:intercept-url
       pattern="/auth/**"
       access="isAnonymous()"/>
+<!--     <security:intercept-url
+      pattern="/testdata/**"
+      access="isAnonymous()"/> -->
     <security:intercept-url
       pattern="/**"
       access="isFullyAuthenticated()"/>
