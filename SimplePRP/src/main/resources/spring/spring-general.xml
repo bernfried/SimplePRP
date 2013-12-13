@@ -10,8 +10,13 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-  <!-- Base package for the component scan -->
+  <!-- Enables the Spring MVC @Controller programming model -->
+  <mvc:annotation-driven/>
+
+  <!-- registers automatically all Spring standard post-processors for annotation based configuration -->
   <context:annotation-config/>
+
+  <!-- Base package for the component scan -->
   <context:component-scan base-package="de.webertise.simpleprp"/>
 
   <beans:bean
@@ -99,8 +104,8 @@
       value="true"/>
     <beans:property name="locations">
       <beans:list>
-        <beans:value>classpath:simpleprp.properties
-        </beans:value>
+        <beans:value>classpath:simpleprp.properties</beans:value>
+        <beans:value>file:${user.home}${file.separator}simplePRP${file.separator}simplePRP.properties</beans:value>
       </beans:list>
     </beans:property>
     <beans:property name="properties">
@@ -112,6 +117,5 @@
       </beans:props>
     </beans:property>
   </beans:bean>
-
 
 </beans:beans>
