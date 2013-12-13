@@ -63,7 +63,7 @@ public class TestDataServiceImpl implements TestDataService {
         // calculate amounts
         int amountProjects = (int) amountUsers / 5;
         int amountModules = amountProjects * 10;
-        int amountRoles = 5;
+        int amountRoles = 2;
         int amountResRoles = 5;
         int amountClients = 5;
         int amountResourceReservations = 20;
@@ -71,17 +71,23 @@ public class TestDataServiceImpl implements TestDataService {
         // result string
         List<String> result = new ArrayList<String>();
 
-        // generate roles
-        List<Role> roles = new ArrayList<Role>();
-        for (int i = 0; i < amountRoles; i++) {
-            Role role = new Role("ROLE_USER" + i, "ROLE_USER" + i + " description");
-            role.setCreatedAt(new Date());
-            role.setCreatedBy("testdata-generator");
-            role.setChangedAt(new Date());
-            role.setChangedBy("testdata-generator");
-            roles.add(roleService.save(role));
-            result.add("Generated: " + role.toString());
-        }
+        // generate Admin role
+        Role roleAdmin = new Role("ROLE_ADMIN", "ROLE_ADMIN Description");
+        roleAdmin.setCreatedAt(new Date());
+        roleAdmin.setCreatedBy("testdata-generator");
+        roleAdmin.setChangedAt(new Date());
+        roleAdmin.setChangedBy("testdata-generator");
+        result.add("Generated: " + roleAdmin.toString());
+        roleService.save(roleAdmin);
+
+        // generate User role
+        Role roleUser = new Role("ROLE_USER", "ROLE_USER Description");
+        roleUser.setCreatedAt(new Date());
+        roleUser.setCreatedBy("testdata-generator");
+        roleUser.setChangedAt(new Date());
+        roleUser.setChangedBy("testdata-generator");
+        result.add("Generated: " + roleUser.toString());
+        roleService.save(roleUser);
 
         // generate resource roles
         List<ResourceRole> resRoles = new ArrayList<ResourceRole>();
@@ -168,18 +174,23 @@ public class TestDataServiceImpl implements TestDataService {
             user.setFirstName("Hans" + i);
             user.setLastName("Meier" + i);
             user.setEmail("hans.meier." + i + "@me.com");
-            user.setLogin("HansMeier" + i);
+            user.setUsername("HansMeier" + i);
             user.setPlainPassword("password" + i);
             user.setCreatedAt(new Date());
             user.setCreatedBy("testdata-generator");
             user.setChangedAt(new Date());
             user.setChangedBy("testdata-generator");
+            user.setAccountNonExpired(true);
+            user.setAccountNonLocked(true);
+            user.setEnabled(true);
+            user.setCredentialsNonExpired(true);
 
             // add roles
             int rdmIndex = (int) Math.floor((Math.random() * amountRoles));
-            user.addAuthority(roles.get(rdmIndex));
-            rdmIndex = (int) Math.floor((Math.random() * amountRoles));
-            user.addAuthority(roles.get(rdmIndex));
+            user.addAuthority(roleUser);
+            if (rdmIndex == 2) {
+                user.addAuthority(roleAdmin);
+            }
 
             // add clients
             rdmIndex = (int) Math.floor((Math.random() * amountClients));

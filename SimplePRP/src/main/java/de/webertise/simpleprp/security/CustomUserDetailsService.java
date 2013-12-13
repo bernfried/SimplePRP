@@ -27,7 +27,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        de.webertise.simpleprp.model.User user = userService.getByLogin(username);
+        de.webertise.simpleprp.model.User user = userService.getByUsername(username);
         logger.debug("CustomUserDetailsService - loadUserByUsername: with username = " + username);
         return new CustomUserDetails(user);
     }

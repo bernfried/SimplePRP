@@ -32,13 +32,13 @@ public interface UserService {
     User save(User user);
 
     /**
-     * Get an User by login.
+     * Get an User by username.
      * 
-     * @param login
-     *            Login of the user
+     * @param username
+     *            Username of the user
      * @return User object
      */
-    User getByLogin(String login);
+    User getByUsername(String username);
 
     /**
      * Get an User by Email.
@@ -102,14 +102,14 @@ public interface UserService {
     boolean exists(Long id);
 
     /**
-     * Authenticates a user based on login and plain password.
+     * Authenticates a user based on username and plain password.
      * 
-     * @param login
-     *            Login
+     * @param username
+     *            Username
      * @param password
      *            Password
      * @return User if successful authenticated. Otherwise null.
      */
-    User authenticate(String login, String password);
+    User authenticate(String username, String password);
 
 }

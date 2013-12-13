@@ -151,7 +151,7 @@ public class UserController {
     }
 
     /**
-     * Create a new user, but check if email or login is not is use already.
+     * Create a new user, but check if email or username is not is use already.
      * 
      * @param user
      *            New user object
@@ -164,14 +164,14 @@ public class UserController {
     public ResponseEntity<User> createUser(@RequestBody User user, UriComponentsBuilder builder) throws Exception {
         logger.info("UserController - createUser: reached");
 
-        // check if an user with that email and login name already exists
+        // check if an user with that email and username name already exists
         User existsUser = userService.getByEmail(user.getEmail());
         if (existsUser != null) {
             throw new ObjectExistsAlreadyException("User with email '" + user.getEmail() + "' exists already.", existsUser);
         } else {
-            existsUser = userService.getByLogin(user.getLogin());
+            existsUser = userService.getByUsername(user.getUsername());
             if (existsUser != null) {
-                throw new ObjectExistsAlreadyException("User with login '" + user.getLogin() + "' exists already.", existsUser);
+                throw new ObjectExistsAlreadyException("User with username '" + user.getUsername() + "' exists already.", existsUser);
             }
         }
 

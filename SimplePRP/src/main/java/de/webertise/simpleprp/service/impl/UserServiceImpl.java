@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
         if (user.getId() == 0L || user.getPlainPassword() != null) {
             // create salt and password for inserted or updated user
             ShaPasswordEncoder pwdEnc = new ShaPasswordEncoder();
-            user.setSalt(user.getLogin() + "-" + user.getEmail());
+            user.setSalt(user.getUsername() + "-" + user.getEmail());
             user.setPassword(pwdEnc.encodePassword(user.getPlainPassword(), user.getSalt()));
         }
 
@@ -52,8 +52,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getByLogin(String login) {
-        return userDao.getByLogin(login);
+    public User getByUsername(String username) {
+        return userDao.getByUsername(username);
     }
 
     @Override
@@ -92,9 +92,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User authenticate(String login, String password) {
-        // get user by login
-        User user = userDao.getByLogin(login);
+    public User authenticate(String username, String password) {
+        // get user by username
+        User user = userDao.getByUsername(username);
         if (user != null) {
             ShaPasswordEncoder pwdEnc = new ShaPasswordEncoder();
             String pwd = pwdEnc.encodePassword(password, user.getSalt());
