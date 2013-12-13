@@ -10,8 +10,13 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-  <!-- Base package for the component scan -->
+  <!-- Enables the Spring MVC @Controller programming model -->
+  <mvc:annotation-driven/>
+
+  <!-- registers automatically all Spring standard post-processors for annotation based configuration -->
   <context:annotation-config/>
+
+  <!-- Base package for the component scan -->
   <context:component-scan base-package="de.webertise.simpleprp"/>
 
   <beans:bean
