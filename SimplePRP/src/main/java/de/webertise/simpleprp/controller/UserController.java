@@ -226,15 +226,24 @@ public class UserController {
     public ResponseEntity<User> updateUser(@RequestBody User user, UriComponentsBuilder builder) throws Exception {
         logger.info("UserController - updateUser: reached");
 
-        // check if an user with that email and login name already exists
-        User existsUser = userService.getByEmail(user.getEmail());
+        // check if the user with the given id can be found
+        User existsUser = userService.get(user.getId());
         if (existsUser == null) {
-            throw new ObjectNotFoundException("User with email '" + user.getEmail() + "' not found.");
+            throw new ObjectNotFoundException("User with id '" + user.getId() + "' not found.");
+        }
+
+        // check if email address has been changed and if nobody else uses
+        // already the same email address.
+        if (!existsUser.getEmail().equals(user.getEmail())) {
+            if (userService.getByEmail(user.getEmail()) != null) {
+                throw new ObjectExistsAlreadyException("An user with the given email '" + user.getEmail() + "' exists already.");
+            }
         }
 
         // Update all changeable user properties
         existsUser.setFirstName(user.getFirstName());
         existsUser.setLastName(user.getLastName());
+        existsUser.setEmail(user.getEmail());
         existsUser.setChangedAt(user.getChangedAt());
         existsUser.setChangedBy(user.getChangedBy());
 
