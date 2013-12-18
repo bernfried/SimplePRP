@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import de.webertise.simpleprp.model.general.AbstractEntityObject;
 

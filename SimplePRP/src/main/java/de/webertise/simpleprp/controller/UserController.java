@@ -100,6 +100,31 @@ public class UserController {
     }
 
     /**
+     * Get a user by username
+     * 
+     * @param username
+     *            username of the user
+     * @return User
+     * @throws Exception
+     */
+    @RequestMapping(value = "/byUsername/{username}", method = RequestMethod.GET, produces = { "application/json", "application/xml" })
+    @ResponseBody
+    public ResponseEntity<User> getUserByUsername(@PathVariable String username) throws Exception {
+        logger.info("UserController - getUserByUsername: username = '" + username + "'");
+
+        // get the user by id
+        User user = userService.getByUsername(username);
+
+        // return http status 404 (not found)
+        if (user == null) {
+            throw new ObjectNotFoundException("User with name '" + username + "' not found.");
+        }
+
+        // return the user found
+        return new ResponseEntity<User>(user, HttpStatus.OK);
+    }
+
+    /**
      * Get all users
      * 
      * @return List of Users
