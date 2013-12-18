@@ -24,7 +24,7 @@
     class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
     <beans:property
       name="favorPathExtension"
-      value="false"/>
+      value="true"/>
     <beans:property
       name="favorParameter"
       value="false"/>

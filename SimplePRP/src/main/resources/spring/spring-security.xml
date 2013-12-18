@@ -16,8 +16,11 @@
       pattern="/auth/**"
       access="isAnonymous()"/>
     <security:intercept-url
+      pattern="/testdata/**"
+      access="permitAll()"/>
+    <security:intercept-url
       pattern="/**"
-      access="isAnonymous()"/>
+      access="isFullyAuthenticated()"/>
 
     <security:form-login
       login-page="/auth/authenticationRequired"
