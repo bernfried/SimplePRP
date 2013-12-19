@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
         logger.debug("UserServiceImpl - save: plainPassword: " + user.getPlainPassword());
 
         // get existing user for salt string
-        if (user.getId() == 0L || user.getPlainPassword() != null) {
+        if (user.getId() == 0L && user.getPlainPassword() != null) {
             // create salt and password for inserted or updated user
             ShaPasswordEncoder pwdEnc = new ShaPasswordEncoder();
             user.setSalt(user.getUsername() + "-" + user.getEmail());
