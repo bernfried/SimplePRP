@@ -241,7 +241,6 @@ public class UserController {
         }
 
         // Update all changeable user properties
-        logger.info("UserController - updateUser: firstName new: " + user.getFirstName());
         existsUser.setFirstName(user.getFirstName());
         existsUser.setLastName(user.getLastName());
         existsUser.setEmail(user.getEmail());
